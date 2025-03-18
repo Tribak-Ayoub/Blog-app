@@ -19,6 +19,12 @@ class PkgBlogServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $this->loadMigrationsFrom(__DIR__ . '/../../Database/Migrations');
+
+        foreach (glob(__DIR__ . '/../../Routes/*.php') as $routeFile) {
+            $this->loadRoutesFrom($routeFile);
+        }
+
+        $this->loadViewsFrom(__DIR__ . '/../../Resources/Views', 'pkg-blog');
     }
 }
