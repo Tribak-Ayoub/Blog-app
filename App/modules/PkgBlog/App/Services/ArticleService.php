@@ -43,7 +43,7 @@ class ArticleService
     {
         $article = Article::create([
             'title' => $data['title'],
-            'category_id' => $data['category'],
+            'category_id' => $data['category_id'],
             'content' => $data['content'],
             'user_id' => Auth::id(),
         ]);

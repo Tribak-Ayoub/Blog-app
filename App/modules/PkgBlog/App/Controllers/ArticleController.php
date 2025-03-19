@@ -11,6 +11,7 @@ use Modules\PkgBlog\App\Models\Tag;
 use Modules\PkgBlog\App\Services\ArticleService;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
+use Modules\PkgBlog\App\Requests\ArticleRequest;
 
 class ArticleController extends Controller
 {
@@ -63,14 +64,9 @@ class ArticleController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(ArticleRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'category_id' => 'required|exists:categories,id',
-            'tags' => 'array|exists:tags,id'
-        ]);
+        $validated = $request->validate();
 
         $article = $this->articleService->createArticle($validated);
 
