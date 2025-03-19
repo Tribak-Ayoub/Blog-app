@@ -14,11 +14,7 @@
             </button>
 
             <!-- Breadcrumb -->
-            <div class="flex items-center gap-2">
-                <span class="text-sm text-gray-500">Home</span>
-                <span class="text-sm text-gray-500">/</span>
-                <span class="text-sm font-semibold">Blog</span>
-            </div>
+            <breadcrumbs />
 
             <!-- Search Bar -->
             <!-- <div class="ml-auto">
@@ -30,6 +26,7 @@
 </template>
 
 <script setup>
+import breadcrumbs from './breadcrumbs.vue';
 const emit = defineEmits(['toggle-sidebar']);
 
 const toggleSidebar = () => {
