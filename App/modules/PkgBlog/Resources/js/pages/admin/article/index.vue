@@ -49,7 +49,7 @@ const articles = ref([]);
 
 const fetchArticles = async () => {
     try {
-        const response = await axios.get("/api/articles");
+        const response = await axios.get("/articles");
         articles.value = response.data;
     } catch (error) {
         console.error("Error fetching articles:", error);

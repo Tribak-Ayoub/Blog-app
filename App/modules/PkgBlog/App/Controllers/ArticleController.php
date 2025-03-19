@@ -2,43 +2,123 @@
 
 namespace Modules\PkgBlog\App\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
-use Modules\Core\App\Controllers\BaseController;
+use Illuminate\Support\Facades\Auth;
+use Modules\PkgBlog\App\Models\Article;
+use Modules\PkgBlog\App\Models\Category;
+use Modules\PkgBlog\App\Models\Tag;
+use Modules\PkgBlog\App\Services\ArticleService;
+use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
 
-class ArticleController extends BaseController
+class ArticleController extends Controller
 {
-    public function index()
+    protected $articleService;
+
+    public function __construct(ArticleService $articleService)
     {
-        return view('PkgBlog::index');
+        $this->articleService = $articleService;
     }
 
-    public function show($id)
+    public function index(Request $request)
     {
-        return view('PkgBlog::show', compact('id'));
+        $filters = [
+            'category' => $request->category,
+            'tag' => $request->tag,
+            'search' => $request->search,
+        ];
+
+        $articles = $this->articleService->paginate($filters);
+        $categories = Category::all();
+        $tags = Tag::all();
+
+        return response()->json([
+            'articles' => $articles,
+            'categories' => $categories,
+            'tags' => $tags
+        ]);
+    }
+
+    public function show(string $id)
+    {
+        $article = $this->articleService->getArticleById($id);
+        $commentableId = $article->id;
+        $commentableType = Article::class;
+
+        return response()->json([
+            'article' => $article
+        ]);
     }
 
     public function create()
     {
-        return view('PkgBlog::create');
+        $categories = Category::all();
+        $allTags = Tag::all();
+
+        return response()->json([
+            'categories' => $categories,
+            'tags' => $allTags
+        ]);
     }
 
     public function store(Request $request)
     {
-        return redirect()->route('articles.index');
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
+            'tags' => 'array|exists:tags,id'
+        ]);
+
+        $article = $this->articleService->createArticle($validated);
+
+        return response()->json([
+            'message' => "The article has been created",
+            'article' => $article
+        ], Response::HTTP_CREATED);
     }
 
     public function edit($id)
     {
-        return view('PkgBlog::edit', compact('id'));
+        $article = Article::findOrFail($id);
+        $categories = Category::all();
+        $allTags = Tag::all();
+        $selectedTags = $article->tags->pluck('id')->toArray();
+
+        return response()->json([
+            'article' => $article,
+            'categories' => $categories,
+            'tags' => $allTags,
+            'selectedTags' => $selectedTags
+        ]);
     }
 
     public function update(Request $request, $id)
     {
-        return redirect()->route('articles.index');
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
+            'tags' => 'array|exists:tags,id'
+        ]);
+
+        $article = Article::findOrFail($id);
+        $this->articleService->updateArticle($article, $validated);
+
+        return response()->json([
+            'message' => "The article has been updated",
+            'article' => $article
+        ]);
     }
 
-    public function destroy($id)
+    public function destroy(string $id)
     {
-        return redirect()->route('articles.index');
+        $article = Article::findOrFail($id);
+        $this->articleService->deleteArticle($article);
+
+        return response()->json([
+            'message' => "The article has been deleted"
+        ], Response::HTTP_NO_CONTENT);
     }
 }
