@@ -30,6 +30,7 @@ class ArticleController extends Controller
         ];
 
         $articles = $this->articleService->paginate($filters);
+        $articles->load('category', 'user');
         $categories = Category::all();
         $tags = Tag::all();
 
