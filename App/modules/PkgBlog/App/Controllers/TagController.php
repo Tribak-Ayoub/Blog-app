@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Modules\Core\App\Controllers\BaseController;
 use Modules\PkgBlog\App\Models\Tag;
+use Modules\PkgBlog\App\Requests\TagRequest;
 use Modules\PkgBlog\App\Services\TagService;
 
 class TagController extends BaseController
@@ -39,11 +40,9 @@ class TagController extends BaseController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(TagRequest $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string',
-        ]);
+        $data = $request->validated();
 
         $tag = $this->tagService->createTag($data);
 
@@ -71,11 +70,9 @@ class TagController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Tag $tag)
+    public function update(TagRequest $request, Tag $tag)
     {
-        $data = $request->validate([
-            'name' => 'required|string',
-        ]);
+        $data = $request->validated();
 
         $updateTag = $this->tagService->updateTag($tag, $data);
 
