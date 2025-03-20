@@ -54,6 +54,13 @@ const routes = [
                 "../../modules/PkgBlog/Resources/js/pages/admin/category/edit.vue"
             ),
     },
+    {
+        path: "/categories/create",
+        component: () =>
+            import(
+                "../../modules/PkgBlog/Resources/js/pages/admin/category/create.vue"
+            ),
+    },
 ];
 
 const router = createRouter({
