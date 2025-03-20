@@ -60,7 +60,7 @@ class ArticleService
 
         $article->update([
             'title' => $data['title'],
-            'category_id' => $data['category'],
+            'category_id' => $data['category_id'],
             'content' => $data['content'],
         ]);
 
