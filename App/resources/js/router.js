@@ -40,6 +40,13 @@ const routes = [
                 "../../modules/PkgBlog/Resources/js/pages/admin/article/edit.vue"
             ),
     },
+    {
+        path: "/categories",
+        component: () =>
+            import(
+                "../../modules/PkgBlog/Resources/js/pages/admin/category/index.vue"
+            ),
+    },
 ];
 
 const router = createRouter({

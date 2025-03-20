@@ -7,9 +7,18 @@ use Modules\PkgBlog\App\Models\Category;
 
 class CategoryService
 {
-    public function paginate($perPage = 10)
+    public function paginate($search, $perPage = 10)
     {
-        return Category::latest()->paginate($perPage);
+        $query = Category::latest();
+
+        // Apply search filter
+        if (!empty($search)) {
+            $query->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search['search'] . '%');
+            });
+        }
+
+        return $query->paginate($perPage);
     }
 
     public function getCategoryById($id)

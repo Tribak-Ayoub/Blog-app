@@ -21,7 +21,9 @@ class CategoryController extends BaseController
      */
     public function index()
     {
-        $categories = $this->categoryService->paginate();
+        $search = request()->search;
+
+        $categories = $this->categoryService->paginate($search);
 
         return response()->json($categories);
     }
