@@ -26,6 +26,13 @@ const routes = [
                 "../../modules/PkgBlog/Resources/js/pages/admin/article/create.vue"
             ),
     },
+    {
+        path: "/articles/:id",
+        component: () =>
+            import(
+                "../../modules/PkgBlog/Resources/js/pages/admin/article/show.vue"
+            ),
+    },
 ];
 
 const router = createRouter({
