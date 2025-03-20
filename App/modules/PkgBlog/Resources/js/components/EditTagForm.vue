@@ -68,6 +68,6 @@ const submitForm = async () => {
 };
 
 const cancel = () => {
-    router.push('/tags'); // Redirect to the categories page
+    router.push('/tags'); // Redirect to the tags page
 };
 </script>
