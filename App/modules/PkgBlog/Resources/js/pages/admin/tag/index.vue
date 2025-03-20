@@ -4,7 +4,7 @@
             <!-- Header: Title + Create Button -->
             <div class="flex justify-between items-center">
                 <h2 class="text-2xl font-semibold text-gray-800">Tags</h2>
-                <router-link to="/categories/create"
+                <router-link to="/tags/create"
                     class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition">
                     + Create Tag
                 </router-link>

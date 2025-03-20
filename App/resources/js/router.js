@@ -68,6 +68,20 @@ const routes = [
                 "../../modules/PkgBlog/Resources/js/pages/admin/tag/index.vue"
             ),
     },
+    {
+        path: "/tags/create",
+        component: () =>
+            import(
+                "../../modules/PkgBlog/Resources/js/pages/admin/tag/create.vue"
+            ),
+    },
+    {
+        path: "/tags/:id/edit",
+        component: () =>
+            import(
+                "../../modules/PkgBlog/Resources/js/pages/admin/tag/edit.vue"
+            ),
+    },
 ];
 
 const router = createRouter({

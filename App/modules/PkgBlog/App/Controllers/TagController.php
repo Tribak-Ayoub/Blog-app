@@ -41,7 +41,13 @@ class TagController extends BaseController
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string',
+        ]);
+
+        $tag = $this->tagService->createTag($data);
+
+        return response()->json($tag);
     }
 
     /**
@@ -57,7 +63,9 @@ class TagController extends BaseController
      */
     public function edit(Tag $tag)
     {
-        //
+        $tag = $this->tagService->getTagById($tag->id);
+
+        return response()->json($tag);
     }
 
     /**
@@ -65,7 +73,13 @@ class TagController extends BaseController
      */
     public function update(Request $request, Tag $tag)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string',
+        ]);
+
+        $updateTag = $this->tagService->updateTag($tag, $data);
+
+        return response()->json($updateTag);
     }
 
     /**
