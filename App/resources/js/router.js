@@ -74,6 +74,7 @@ const routes = [
             import(
                 "../../modules/PkgBlog/Resources/js/pages/admin/tag/create.vue"
             ),
+        meta: { requiresAuth: true, permission: "create tag" },
     },
     {
         path: "/tags/:id/edit",

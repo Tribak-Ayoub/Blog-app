@@ -16,16 +16,17 @@ class TagController extends BaseController
     public function __construct(TagService $tagService)
     {
         $this->tagService = $tagService;
+        $this->middleware('auth');
     }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $search = request()->search;
-
+        $this->authorize('viewAny', Tag::class);
+        $search = request()->has('search') ? ['search' => request()->search] : [];
         $tags = $this->tagService->paginate($search);
-
         return response()->json($tags);
     }
 
@@ -42,11 +43,10 @@ class TagController extends BaseController
      */
     public function store(TagRequest $request)
     {
+        $this->authorize('create', Tag::class);
         $data = $request->validated();
-
         $tag = $this->tagService->createTag($data);
-
-        return response()->json($tag);
+        return response()->json($tag, Response::HTTP_CREATED);
     }
 
     /**
@@ -62,8 +62,8 @@ class TagController extends BaseController
      */
     public function edit(Tag $tag)
     {
+        $this->authorize('update', $tag);
         $tag = $this->tagService->getTagById($tag->id);
-
         return response()->json($tag);
     }
 
@@ -72,11 +72,10 @@ class TagController extends BaseController
      */
     public function update(TagRequest $request, Tag $tag)
     {
+        $this->authorize('update', $tag);
         $data = $request->validated();
-
-        $updateTag = $this->tagService->updateTag($tag, $data);
-
-        return response()->json($updateTag);
+        $updatedTag = $this->tagService->updateTag($tag, $data);
+        return response()->json($updatedTag);
     }
 
     /**
@@ -85,13 +84,8 @@ class TagController extends BaseController
     public function destroy(string $id)
     {
         $tag = $this->tagService->getTagById($id);
-
-        if (!$tag) {
-            return response()->json(['message' => 'Tag not found'], Response::HTTP_NOT_FOUND);
-        }
-
+        $this->authorize('delete', $tag);
         $this->tagService->deleteTag($tag);
-
         return response()->json(['message' => 'Tag deleted successfully'], Response::HTTP_OK);
     }
 }

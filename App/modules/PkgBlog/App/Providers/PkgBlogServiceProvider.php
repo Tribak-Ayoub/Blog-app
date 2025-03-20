@@ -4,12 +4,15 @@ namespace Modules\PkgBlog\App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Modules\PkgBlog\App\Models\Article;
+use Modules\PkgBlog\App\Models\Tag;
 use Modules\PkgBlog\App\Policies\ArticlePolicy;
+use Modules\PkgBlog\App\Policies\TagPolicy;
 
 class PkgBlogServiceProvider extends ServiceProvider
 {
     protected $policies = [
         Article::class => ArticlePolicy::class,
+        Tag::class => TagPolicy::class,
     ];
     
     /**
