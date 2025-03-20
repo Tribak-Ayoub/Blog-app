@@ -112,5 +112,19 @@ const filteredArticles = computed(() => {
     });
 });
 
+const deleteArticle = async (articleId) => {
+    if (confirm("Are you sure you want to delete this article?")) {
+        try {
+            const response = await axios.delete(`/api/articles/${articleId}`);
+
+            // Remove the article from the list
+            articles.value = articles.value.filter(article => article.id !== articleId);
+        } catch (error) {
+            console.error("Error deleting article:", error);
+            alert("There was an error deleting the article. Please try again later.");
+        }
+    }
+};
+
 onMounted(fetchArticles);
 </script>
