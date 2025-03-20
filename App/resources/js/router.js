@@ -61,6 +61,13 @@ const routes = [
                 "../../modules/PkgBlog/Resources/js/pages/admin/category/create.vue"
             ),
     },
+    {
+        path: "/tags",
+        component: () =>
+            import(
+                "../../modules/PkgBlog/Resources/js/pages/admin/tag/index.vue"
+            ),
+    },
 ];
 
 const router = createRouter({
