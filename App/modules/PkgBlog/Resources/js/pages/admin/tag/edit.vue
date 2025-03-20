@@ -2,10 +2,10 @@
     <Layout>
         <div class="p-6 space-y-6">
             <div>
-                <h2 class="text-2xl font-semibold text-gray-800">Edit Category</h2>
+                <h2 class="text-2xl font-semibold text-gray-800">Edit Tag</h2>
             </div>
             <div class="overflow-x-auto bg-white p-4 rounded-lg shadow">
-                <EditCategoryForm />
+                <EditTagForm />
             </div>
         </div>
     </Layout>
@@ -13,5 +13,5 @@
 
 <script setup>
 import Layout from '../../../components/Layout.vue';
-import EditCategoryForm from '../../../components/EditCategoryForm.vue';
+import EditTagForm from '../../../components/EditTagForm.vue';
 </script>
