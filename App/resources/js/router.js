@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 const routes = [
     {
         path: "/",
-        redirect: "/dashboard", 
+        redirect: "/dashboard",
     },
     {
         path: "/dashboard",
@@ -38,6 +38,27 @@ const routes = [
         component: () =>
             import(
                 "../../modules/PkgBlog/Resources/js/pages/admin/article/edit.vue"
+            ),
+    },
+    {
+        path: "/categories",
+        component: () =>
+            import(
+                "../../modules/PkgBlog/Resources/js/pages/admin/category/index.vue"
+            ),
+    },
+    {
+        path: "/categories/:id/edit",
+        component: () =>
+            import(
+                "../../modules/PkgBlog/Resources/js/pages/admin/category/edit.vue"
+            ),
+    },
+    {
+        path: "/categories/create",
+        component: () =>
+            import(
+                "../../modules/PkgBlog/Resources/js/pages/admin/category/create.vue"
             ),
     },
 ];

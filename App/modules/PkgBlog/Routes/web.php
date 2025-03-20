@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Modules\PkgBlog\App\Controllers\ArticleController;
+use Modules\PkgBlog\App\Controllers\CategoryController;
 
 Route::prefix('api/articles')->middleware(['auth', 'web'])->group(function () {
     Route::get('/', [ArticleController::class, 'index'])->name('articles.index');
@@ -14,6 +15,14 @@ Route::prefix('api/articles')->middleware(['auth', 'web'])->group(function () {
     Route::delete('/{article}', [ArticleController::class, 'destroy'])->name('articles.destroy');
 });
 
+Route::prefix('api/categories')->middleware(['auth', 'web'])->group(function () {
+    Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
+    Route::get('/create', [CategoryController::class, 'create'])->name('categories.create');
+    Route::post('/store', [CategoryController::class, 'store'])->name('categories.store');
+    Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+    Route::get('/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+    Route::put('/{category}', [CategoryController::class, 'update'])->name('categories.update');
+});
 // Route::get('/{any}', function () {
 //     return view('welcome');  
 // })->where('any', '.*');
