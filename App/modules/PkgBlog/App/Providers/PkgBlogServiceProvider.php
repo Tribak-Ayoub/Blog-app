@@ -3,9 +3,15 @@
 namespace Modules\PkgBlog\App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Modules\PkgBlog\App\Models\Article;
+use Modules\PkgBlog\App\Policies\ArticlePolicy;
 
 class PkgBlogServiceProvider extends ServiceProvider
 {
+    protected $policies = [
+        Article::class => ArticlePolicy::class,
+    ];
+    
     /**
      * Register services.
      */

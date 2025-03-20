@@ -10,16 +10,17 @@ use Modules\PkgBlog\App\Models\Category;
 use Modules\PkgBlog\App\Models\Tag;
 use Modules\PkgBlog\App\Services\ArticleService;
 use Illuminate\Http\Response;
-use App\Http\Controllers\Controller;
+use Modules\Core\App\Controllers\BaseController;
 use Modules\PkgBlog\App\Requests\ArticleRequest;
 
-class ArticleController extends Controller
+class ArticleController extends BaseController
 {
     protected $articleService;
 
     public function __construct(ArticleService $articleService)
     {
         $this->articleService = $articleService;
+        $this->middleware('auth');
     }
 
     public function index(Request $request)
@@ -55,6 +56,8 @@ class ArticleController extends Controller
 
     public function create()
     {
+        $this->authorize('create', Article::class);
+
         $categories = Category::all();
         $allTags = Tag::all();
 
@@ -66,6 +69,8 @@ class ArticleController extends Controller
 
     public function store(ArticleRequest $request)
     {
+        $this->authorize('create', Article::class);
+
         $validated = $request->validate();
 
         $article = $this->articleService->createArticle($validated);
@@ -79,6 +84,7 @@ class ArticleController extends Controller
     public function edit($id)
     {
         $article = Article::findOrFail($id);
+        $this->authorize('update', $article);
         $categories = Category::all();
         $allTags = Tag::all();
         $selectedTags = $article->tags->pluck('id')->toArray();
@@ -91,16 +97,12 @@ class ArticleController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(ArticleRequest $request, $id)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'category_id' => 'required|exists:categories,id',
-            'tags' => 'array|exists:tags,id'
-        ]);
+        $validated = $request->validate();
 
         $article = Article::findOrFail($id);
+        $this->authorize('update', $article);
         $this->articleService->updateArticle($article, $validated);
 
         return response()->json([
@@ -112,6 +114,7 @@ class ArticleController extends Controller
     public function destroy(string $id)
     {
         $article = Article::findOrFail($id);
+        $this->authorize('delete', $article);
         $this->articleService->deleteArticle($article);
 
         return response()->json([

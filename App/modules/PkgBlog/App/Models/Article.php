@@ -11,7 +11,7 @@ class Article extends Model
     /** @use HasFactory<\Database\Factories\ArticleFactory> */
     use HasFactory;
 
-    protected $fillable = ['title', 'content', 'slug', 'user_id', 'category_id'];
+    protected $fillable = ['title', 'content', 'user_id', 'category_id'];
 
     public function user()
     {
