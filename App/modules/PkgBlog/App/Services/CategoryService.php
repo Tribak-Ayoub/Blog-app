@@ -2,6 +2,7 @@
 
 namespace Modules\PkgBlog\App\Services;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Modules\PkgBlog\App\Models\Category;
 
@@ -44,6 +45,16 @@ class CategoryService
 
     public function deleteCategory(Category $category)
     {
+        $defaultCategory = Category::where('name', 'Uncategorized')->first();
+
+        if (!$defaultCategory) {
+            throw new ModelNotFoundException("Default category not found. Cannot delete.");
+        }
+
+        // Reassign articles before deletion
+        $category->articles()->update(['category_id' => $defaultCategory->id]);
+
+        // Delete the category
         return $category->delete();
     }
 

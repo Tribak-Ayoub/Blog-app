@@ -87,11 +87,13 @@ const searchedCategories = computed(() => {
 const deleteCategory = async (categoryId) => {
     if (confirm("Are you sure you want to delete this category?")) {
         try {
-            await axios.delete(`/api/categories/${categoryId}`);
+            const response = await axios.delete(`/api/categories/${categoryId}`);
+            alert(response.data.message);
+
+            // Remove category from the list
             categories.value = categories.value.filter(category => category.id !== categoryId);
         } catch (error) {
-            console.error("Error deleting category:", error);
-            alert("There was an error deleting the category. Please try again later.");
+            alert(error.response?.data?.message || "An error occurred. Please try again.");
         }
     }
 };

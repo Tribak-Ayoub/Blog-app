@@ -2,7 +2,10 @@
 
 namespace Modules\PkgBlog\App\Controllers;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Modules\Core\App\Controllers\BaseController;
 use Modules\PkgBlog\App\Models\Category;
 use Modules\PkgBlog\App\Services\CategoryService;
@@ -85,10 +88,22 @@ class CategoryController extends BaseController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $category)
+    public function destroy(string $id)
     {
-        $this->categoryService->deleteCategory($category);
+        try {
+            $category = $this->categoryService->getCategoryById($id);
 
-        return response()->json(null, 204);
+            if (!$category) {
+                return response()->json(['message' => 'Category not found'], Response::HTTP_NOT_FOUND);
+            }
+
+            $this->categoryService->deleteCategory($category);
+
+            return response()->json(['message' => "Category deleted successfully"], Response::HTTP_OK);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        } catch (QueryException $e) {
+            return response()->json(['message' => "Database error: " . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }
