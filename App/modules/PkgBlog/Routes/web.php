@@ -14,6 +14,6 @@ Route::prefix('api/articles')->middleware('auth')->group(function () {
     Route::delete('/{article}', [ArticleController::class, 'destroy'])->name('articles.destroy');
 });
 
-Route::get('/{any}', function () {
-    return view('welcome');  
-})->where('any', '.*');
+// Route::get('/{any}', function () {
+//     return view('welcome');  
+// })->where('any', '.*');
