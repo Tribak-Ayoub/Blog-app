@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Modules\PkgBlog\App\Controllers\ArticleController;
 
-Route::prefix('api/articles')->middleware('auth')->group(function () {
+Route::prefix('api/articles')->middleware(['auth', 'web'])->group(function () {
     Route::get('/', [ArticleController::class, 'index'])->name('articles.index');
     Route::get('/create', [ArticleController::class, 'create'])->name('articles.create');
     Route::post('/store', [ArticleController::class, 'store'])->name('articles.store');

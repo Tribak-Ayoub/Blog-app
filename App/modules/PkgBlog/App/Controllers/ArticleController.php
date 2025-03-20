@@ -41,6 +41,16 @@ class ArticleController extends BaseController
             'categories' => $categories,
             'tags' => $tags
         ]);
+
+        // if (Auth::check() && Auth::user()->can('viewAny', Article::class)) {
+        //     return response()->json([
+        //         'articles' => $articles,
+        //         'categories' => $categories,
+        //         'tags' => $tags
+        //     ]);
+        // }
+
+        // return 'You are not authorized to view this page';
     }
 
     public function show(string $id)
@@ -71,7 +81,7 @@ class ArticleController extends BaseController
     {
         $this->authorize('create', Article::class);
 
-        $validated = $request->validate();
+        $validated = $request->validated();
 
         $article = $this->articleService->createArticle($validated);
 
@@ -99,7 +109,7 @@ class ArticleController extends BaseController
 
     public function update(ArticleRequest $request, $id)
     {
-        $validated = $request->validate();
+        $validated = $request->validated();
 
         $article = Article::findOrFail($id);
         $this->authorize('update', $article);

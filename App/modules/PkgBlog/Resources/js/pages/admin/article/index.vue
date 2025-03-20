@@ -90,7 +90,7 @@ const selectedCategory = ref("");
 
 const fetchArticles = async () => {
     try {
-        const response = await axios.get("/api/articles", { withCredentials: true });
+        const response = await axios.get("/api/articles");
         articles.value = response.data.articles.data;
         categories.value = response.data.categories;
     } catch (error) {
