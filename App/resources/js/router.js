@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 const routes = [
     {
         path: "/",
-        redirect: "/dashboard", 
+        redirect: "/dashboard",
     },
     {
         path: "/dashboard",
@@ -45,6 +45,13 @@ const routes = [
         component: () =>
             import(
                 "../../modules/PkgBlog/Resources/js/pages/admin/category/index.vue"
+            ),
+    },
+    {
+        path: "/categories/:id/edit",
+        component: () =>
+            import(
+                "../../modules/PkgBlog/Resources/js/pages/admin/category/edit.vue"
             ),
     },
 ];

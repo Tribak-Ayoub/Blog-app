@@ -36,9 +36,9 @@ class CategoryService
 
     public function updateCategory(Category $category, array $data)
     {
-        $category->update([
-            'name' => $data['name'],
-        ]);
+        $category->name = $data['name'];
+
+        $category->save();
 
         return $category;
     }

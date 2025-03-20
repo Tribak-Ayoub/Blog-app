@@ -80,9 +80,9 @@ class CategoryController extends BaseController
             'name' => 'required|string',
         ]);
 
-        $category = $this->categoryService->updateCategory($category, $data);
+        $updateCategory = $this->categoryService->updateCategory($category, $data);
 
-        return response()->json($category);
+        return response()->json($updateCategory);
     }
 
     /**

@@ -20,6 +20,8 @@ Route::prefix('api/categories')->middleware(['auth', 'web'])->group(function () 
     Route::get('/create', [CategoryController::class, 'create'])->name('categories.create');
     Route::post('/store', [CategoryController::class, 'store'])->name('categories.store');
     Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+    Route::get('/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+    Route::put('/{category}', [CategoryController::class, 'update'])->name('categories.update');
 });
 // Route::get('/{any}', function () {
 //     return view('welcome');  
