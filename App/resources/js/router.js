@@ -33,6 +33,13 @@ const routes = [
                 "../../modules/PkgBlog/Resources/js/pages/admin/article/show.vue"
             ),
     },
+    {
+        path: "/articles/:id/edit",
+        component: () =>
+            import(
+                "../../modules/PkgBlog/Resources/js/pages/admin/article/edit.vue"
+            ),
+    },
 ];
 
 const router = createRouter({
