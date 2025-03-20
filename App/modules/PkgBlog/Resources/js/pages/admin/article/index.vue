@@ -36,7 +36,7 @@
             <div class="overflow-x-auto bg-white p-4 rounded-lg shadow">
                 <table class="w-full border border-gray-200 rounded-lg">
                     <thead>
-                        <tr class="bg-gray-200 text-gray-700">
+                        <tr class="bg-gray-200 text-gray-700 text-left">
                             <th class="py-2 px-4">#</th>
                             <th class="py-2 px-4">Title</th>
                             <th class="py-2 px-4">Author</th>
@@ -47,7 +47,7 @@
                     </thead>
                     <tbody v-if="filteredArticles.length">
                         <tr v-for="(article, index) in filteredArticles" :key="article.id"
-                            class="border-t hover:bg-gray-50">
+                            class="border-t hover:bg-gray-50 text-left">
                             <td class="py-2 px-4">{{ index + 1 }}</td>
                             <td class="py-2 px-4">{{ article.title }}</td>
                             <td class="py-2 px-4">{{ article.user.name }}</td>

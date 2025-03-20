@@ -27,7 +27,7 @@
             <div class="overflow-x-auto bg-white p-4 rounded-lg shadow">
                 <table class="w-full border border-gray-200 rounded-lg">
                     <thead>
-                        <tr class="bg-gray-200 text-gray-700">
+                        <tr class="bg-gray-200 text-gray-700 text-left">
                             <th class="py-2 px-4">#</th>
                             <th class="py-2 px-4">Name</th>
                             <th class="py-2 px-4">Actions</th>
@@ -35,7 +35,7 @@
                     </thead>
                     <tbody v-if="searchedCategories.length">
                         <tr v-for="(category, index) in searchedCategories" :key="category.id"
-                            class="border-t hover:bg-gray-50">
+                            class="border-t hover:bg-gray-50 text-left">
                             <td class="py-2 px-4">{{ index + 1 }}</td>
                             <td class="py-2 px-4">{{ category.name }}</td>
                             <td class="py-2 px-4 space-x-2">
