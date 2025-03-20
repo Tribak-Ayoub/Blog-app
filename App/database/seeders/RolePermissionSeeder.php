@@ -15,17 +15,18 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        $permissions = [
-            'create article',
-            'edit article',
-            'delete article',
-            'view article',
-            'manage users',
-            'edit settings',
+        $permissionGroups = [
+            'article' => ['create', 'edit', 'delete', 'view'],
+            'tag' => ['create', 'edit', 'delete', 'view'],
+            'category' => ['create', 'edit', 'delete', 'view'],
+            'user' => ['manage'],
+            'settings' => ['edit'],
         ];
 
-        foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+        foreach ($permissionGroups as $module => $actions) {
+            foreach ($actions as $action) {
+                Permission::firstOrCreate(['name' => "{$action} {$module}"]);
+            }
         }
 
         $adminRole = Role::create(['name' => 'admin']);
