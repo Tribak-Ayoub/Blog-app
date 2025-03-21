@@ -69,32 +69,68 @@
         </div>
 
         <!-- User Profile -->
-        <div class="p-4 border-t border-gray-700">
-            <div class="flex items-center">
+        <div class="p-4 border-t border-gray-700 relative">
+            <div class="flex items-center cursor-pointer" @click="toggleDropdown">
                 <img :src="user.avatar" :alt="user.name" class="w-8 h-8 rounded-full" />
                 <div v-if="!isCollapsed" class="ml-3">
                     <p class="text-sm font-semibold">{{ user.name }}</p>
                     <p class="text-xs text-gray-400">{{ user.email }}</p>
                 </div>
             </div>
+
+            <!-- Dropdown -->
+            <ul v-show="isDropdownOpen"
+                class="absolute left-0 bottom-full transform -translate-y-2 w-52 bg-white text-gray-900 shadow-lg rounded-lg p-2 z-50">
+                <li>
+                    <a href="/profile/edit" class="block px-4 py-2 hover:bg-gray-200">Profile</a>
+                </li>
+                <li>
+                    <button @click="logout" class="block w-full text-left px-4 py-2 hover:bg-gray-200">
+                        Log Out
+                    </button>
+                </li>
+            </ul>
         </div>
     </aside>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
 
-const user = ref({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    avatar: '/avatars/john-doe.jpg',
-});
-
-// Collapsed state (passed from parent)
+// Sidebar collapsed state
 defineProps({
     isCollapsed: {
         type: Boolean,
         default: false,
     },
+});
+
+const isDropdownOpen = ref(false);
+
+const toggleDropdown = () => {
+    isDropdownOpen.value = !isDropdownOpen.value;
+};
+
+const router = useRouter();
+const logout = async () => {
+    try {
+        await axios.post('/logout'); // Send logout request
+        router.push('/'); // Redirect to home page after logout
+    } catch (error) {
+        console.error('Logout failed:', error);
+    }
+};
+
+const user = ref({});  
+
+onMounted(async () => {
+    try {
+        const response = await axios.get('/user');  
+        user.value = response.data;  
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+    }
 });
 </script>
