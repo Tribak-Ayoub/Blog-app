@@ -72,7 +72,7 @@ const submitCategory = async () => {
         });
 
         // Show success message
-        successMessage.value = "Article created successfully!";
+        successMessage.value = "Category created successfully!";
 
         // Redirect after 1 second
         setTimeout(() => router.push("/categories"), 1000);
