@@ -82,7 +82,7 @@
             <ul v-show="isDropdownOpen"
                 class="absolute left-0 bottom-full transform -translate-y-2 w-52 bg-white text-gray-900 shadow-lg rounded-lg p-2 z-50">
                 <li>
-                    <a href="/profile/edit" class="block px-4 py-2 hover:bg-gray-200">Profile</a>
+                    <a href="/profile" class="block px-4 py-2 hover:bg-gray-200">Profile</a>
                 </li>
                 <li>
                     <button @click="logout" class="block w-full text-left px-4 py-2 hover:bg-gray-200">
