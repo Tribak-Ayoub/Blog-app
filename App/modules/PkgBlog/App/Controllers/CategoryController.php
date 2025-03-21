@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Modules\Core\App\Controllers\BaseController;
 use Modules\PkgBlog\App\Models\Category;
+use Modules\PkgBlog\App\Requests\CategoryRequest;
 use Modules\PkgBlog\App\Services\CategoryService;
 
 class CategoryController extends BaseController
@@ -42,11 +43,9 @@ class CategoryController extends BaseController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string',
-        ]);
+        $data = $request->validated();
 
         $category = $this->categoryService->createCategory($data);
 
@@ -74,11 +73,9 @@ class CategoryController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Category $category)
+    public function update(CategoryRequest $request, Category $category)
     {
-        $data = $request->validate([
-            'name' => 'required|string',
-        ]);
+        $data = $request->validated();
 
         $updateCategory = $this->categoryService->updateCategory($category, $data);
 
