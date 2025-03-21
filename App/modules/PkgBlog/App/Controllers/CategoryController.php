@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Modules\Core\App\Controllers\BaseController;
 use Modules\PkgBlog\App\Models\Category;
+use Modules\PkgBlog\App\Requests\CategoryRequest;
 use Modules\PkgBlog\App\Services\CategoryService;
 
 class CategoryController extends BaseController
@@ -17,6 +18,7 @@ class CategoryController extends BaseController
     public function __construct(CategoryService $categoryService)
     {
         $this->categoryService = $categoryService;
+        $this->middleware('auth');
     }
 
     /**
@@ -24,6 +26,8 @@ class CategoryController extends BaseController
      */
     public function index()
     {
+        $this->authorize('viewAny', Category::class);
+
         $search = request()->search;
 
         $categories = $this->categoryService->paginate($search);
@@ -42,11 +46,11 @@ class CategoryController extends BaseController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string',
-        ]);
+        $this->authorize('create', Category::class);
+
+        $data = $request->validated();
 
         $category = $this->categoryService->createCategory($data);
 
@@ -66,6 +70,8 @@ class CategoryController extends BaseController
      */
     public function edit(Category $category)
     {
+        $this->authorize('update', $category);
+
         $category = $this->categoryService->getCategoryById($category->id);
 
         return response()->json($category);
@@ -74,11 +80,11 @@ class CategoryController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Category $category)
+    public function update(CategoryRequest $request, Category $category)
     {
-        $data = $request->validate([
-            'name' => 'required|string',
-        ]);
+        $this->authorize('update', $category);
+
+        $data = $request->validated();
 
         $updateCategory = $this->categoryService->updateCategory($category, $data);
 
@@ -92,6 +98,8 @@ class CategoryController extends BaseController
     {
         try {
             $category = $this->categoryService->getCategoryById($id);
+            
+            $this->authorize('delete', $category);
 
             if (!$category) {
                 return response()->json(['message' => 'Category not found'], Response::HTTP_NOT_FOUND);
