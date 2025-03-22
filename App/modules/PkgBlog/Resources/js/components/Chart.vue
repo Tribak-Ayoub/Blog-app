@@ -1,6 +1,6 @@
 <template>
-    <div class="w-full max-w-lg mx-auto">
-        <canvas ref="chartCanvas"></canvas>
+    <div class="card bg-base-100 shadow-xl w-full max-w-full mx-auto p-4">
+        <canvas ref="chartCanvas" class="w-full h-72"></canvas>
     </div>
 </template>
 
@@ -40,9 +40,3 @@ export default {
     },
 };
 </script>
-
-<style scoped>
-canvas {
-    max-width: 100%;
-}
-</style>
