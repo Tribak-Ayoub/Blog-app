@@ -36,7 +36,11 @@ class ArticleService
 
     public function getArticleById($id)
     {
-        return Article::with(['category', 'tags', 'comments'])->findOrFail($id);
+        $article = Article::with(['category', 'tags', 'comments'])->findOrFail($id);
+
+        $article->increment('view_count');
+
+        return $article;
     }
 
     public function createArticle(array $data)

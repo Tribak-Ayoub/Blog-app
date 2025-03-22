@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Modules\PkgBlog\App\Controllers\ArticleController;
 use Modules\PkgBlog\App\Controllers\CategoryController;
+use Modules\PkgBlog\App\Controllers\ChartDataController;
 use Modules\PkgBlog\App\Controllers\TagController;
 
 Route::prefix('api/articles')->middleware(['auth', 'web'])->group(function () {
@@ -33,6 +34,7 @@ Route::prefix('api/tags')->middleware(['auth', 'web'])->group(function () {
     Route::get('/{tag}/edit', [TagController::class, 'edit'])->name('tags.edit');
     Route::put('/{tag}', [TagController::class, 'update'])->name('tags.update');
 });
-// Route::get('/{any}', function () {
-//     return view('welcome');  
-// })->where('any', '.*');
+
+Route::prefix('/chart-data')->middleware(['auth', 'web'])->group(function () {
+    Route::get('/articles', [ChartDataController::class, 'articles']);
+});
