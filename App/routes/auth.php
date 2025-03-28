@@ -58,6 +58,12 @@ Route::middleware('auth')->group(function () {
         ->name('logout');
 });
 
-Route::middleware('auth')->get('/user', function () {
-    return auth()->user();
+Route::middleware('auth', 'web')->get('/user', function () {
+    $user = auth()->user();
+
+    return response()->json([
+        'user' => $user,
+        'roles' => $user->roles->pluck('name'), // Assuming roles relationship exists
+        'permissions' => $user->getAllPermissions()->pluck('name'), // Assuming Spatie permissions package
+    ]);
 });

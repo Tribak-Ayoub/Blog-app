@@ -1,9 +1,17 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useAuthStore } from "./stores/auth";
+import { watchEffect } from "vue";
 
 const routes = [
     {
         path: "/",
-        redirect: "/dashboard",
+        redirect: "/articles",
+    },
+    {
+        path: "/home",
+        component: () =>
+            import("../../modules/PkgBlog/Resources/js/pages/Test.vue"),
+        meta: { requiresAuth: false }, // Public route
     },
     {
         path: "/dashboard",
@@ -11,7 +19,7 @@ const routes = [
             import(
                 "../../modules/PkgBlog/Resources/js/pages/admin/Dashboard.vue"
             ),
-        // meta: { requiresAuth: true, role: "admin" },
+        meta: { requiresAuth: true, role: "admin" },
     },
     {
         path: "/articles",
@@ -93,11 +101,55 @@ const routes = [
             ),
         meta: { requiresAuth: true, permission: "edit tag" },
     },
+    {
+        path: "/unauthorized",
+        component: () =>
+            import("../../modules/PkgBlog/Resources/js/pages/Unauthorized.vue"),
+    },
 ];
 
 const router = createRouter({
     history: createWebHistory(),
     routes,
+});
+
+router.beforeEach((to, from, next) => {
+    const authStore = useAuthStore();
+
+    if (authStore.loading) {
+        // Use watchEffect to delay navigation until loading is done
+        const stopWatching = watchEffect(() => {
+            if (!authStore.loading) {
+                stopWatching(); // Stop watching once loading is complete
+                router.push(to.fullPath); // Retry navigation
+            }
+        });
+
+        return next(false); // Cancel current navigation attempt
+    }
+
+    // Public route (does not require authentication)
+    if (to.meta.requiresAuth === false) {
+        return next();
+    }
+
+    // If authentication is required but user is not logged in, redirect to login
+    if (to.meta.requiresAuth && !authStore.user) {
+        window.location.href = "/login";
+        return;
+    }
+
+    // Check role-based access control
+    if (to.meta.role && !authStore.hasRole(to.meta.role)) {
+        return next("/unauthorized");
+    }
+
+    // Check permission-based access control
+    if (to.meta.permission && !authStore.hasPermission(to.meta.permission)) {
+        return next("/unauthorized");
+    }
+
+    next();
 });
 
 export default router;
