@@ -12,7 +12,7 @@
         <!-- Navigation Menu -->
         <div class="p-4 flex-1">
             <ul class="space-y-2">
-                <li>
+                <li v-if="authStore.roles.includes('admin')">
                     <router-link to="/" class="flex items-center p-2 hover:bg-gray-700 rounded">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -21,7 +21,7 @@
                         <span v-if="!isCollapsed" class="ml-2">Dashboard</span>
                     </router-link>
                 </li>
-                <li>
+                <li v-if="authStore.permissions.includes('view article')">
                     <router-link to="/articles" class="flex items-center p-2 hover:bg-gray-700 rounded">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -30,7 +30,7 @@
                         <span v-if="!isCollapsed" class="ml-2">Articles</span>
                     </router-link>
                 </li>
-                <li>
+                <li v-if="authStore.permissions.includes('view category')">
                     <router-link to="/categories" class="flex items-center p-2 hover:bg-gray-700 rounded">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 3v18M18 3v18" />
@@ -38,7 +38,7 @@
                         <span v-if="!isCollapsed" class="ml-2">Categories</span>
                     </router-link>
                 </li>
-                <li>
+                <li v-if="authStore.permissions.includes('view tag')">
                     <router-link to="/tags" class="flex items-center p-2 hover:bg-gray-700 rounded">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -47,7 +47,7 @@
                         <span v-if="!isCollapsed" class="ml-2">Tags</span>
                     </router-link>
                 </li>
-                <li>
+                <li v-if="authStore.permissions.includes('view comment')">
                     <router-link to="/comments" class="flex items-center p-2 hover:bg-gray-700 rounded">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -56,7 +56,7 @@
                         <span v-if="!isCollapsed" class="ml-2">Comments</span>
                     </router-link>
                 </li>
-                <li>
+                <li v-if="authStore.roles.includes('admin')">
                     <router-link to="/users" class="flex items-center p-2 hover:bg-gray-700 rounded">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -71,10 +71,11 @@
         <!-- User Profile -->
         <div class="p-4 border-t border-gray-700 relative">
             <div class="flex items-center cursor-pointer" @click="toggleDropdown">
-                <img :src="user.avatar" :alt="user.name" class="w-8 h-8 rounded-full" />
-                <div v-if="!isCollapsed" class="ml-3">
-                    <p class="text-sm font-semibold">{{ user.name }}</p>
-                    <p class="text-xs text-gray-400">{{ user.email }}</p>
+                <img v-if="authStore.user" :src="authStore.user.avatar || ''" :alt="authStore.user.name || 'User'"
+                    class="w-8 h-8 rounded-full" />
+                <div v-if="authStore.user && !isCollapsed" class="ml-3">
+                    <p class="text-sm font-semibold">{{ authStore.user.name }}</p>
+                    <p class="text-xs text-gray-400">{{ authStore.user.email }}</p>
                 </div>
             </div>
 
@@ -98,6 +99,12 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { useAuthStore } from "@/stores/auth";
+
+const authStore = useAuthStore();
+// const user = ref(null);
+// const roles = ref([]);
+// const permissions = ref([]); 
 
 // Sidebar collapsed state
 defineProps({
@@ -117,20 +124,24 @@ const router = useRouter();
 const logout = async () => {
     try {
         await axios.post('/logout'); // Send logout request
-        router.push('/'); // Redirect to home page after logout
+        router.push('/home'); // Redirect to home page after logout
     } catch (error) {
         console.error('Logout failed:', error);
     }
 };
 
-const user = ref({});  
-
-onMounted(async () => {
-    try {
-        const response = await axios.get('/user');  
-        user.value = response.data;  
-    } catch (error) {
-        console.error('Error fetching user data:', error);
+onMounted(() => {
+    if (!authStore.user) {
+        authStore.fetchUser();
     }
+
+    // // Fetch permissions for the logged-in user
+    // if (authStore.user) {
+    //     user.value = authStore.user;
+    //     permissions.value = authStore.user.permissions || [];
+    //     roles.value = authStore.user.roles || [];
+    // }
 });
+
+// console.log(user.value);
 </script>
