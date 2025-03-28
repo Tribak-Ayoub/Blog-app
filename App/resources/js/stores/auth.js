@@ -15,8 +15,7 @@ export const useAuthStore = defineStore("auth", {
                 this.user = response.data.user;
                 this.roles = response.data.roles;
                 this.permissions = response.data.permissions;
-                this.loading = false; 
-                console.log("User fetched:", this.user, this.roles, this.permissions); // Add this log to check the fetched data
+                this.loading = false;
             } catch (error) {
                 console.error("Failed to fetch user data:", error);
             } finally {

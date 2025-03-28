@@ -41,7 +41,7 @@
                             <th class="py-2 px-4">Title</th>
                             <th class="py-2 px-4">Author</th>
                             <th class="py-2 px-4">Category</th>
-                            <th class="py-2 px-4">Published At</th>
+                            <th class="py-2 px-4">Created At</th>
                             <th class="py-2 px-4">Actions</th>
                         </tr>
                     </thead>
@@ -52,16 +52,20 @@
                             <td class="py-2 px-4">{{ article.title }}</td>
                             <td class="py-2 px-4">{{ article.user.name }}</td>
                             <td class="py-2 px-4">{{ article.category.name }}</td>
-                            <td class="py-2 px-4">{{ formatDate(article.published_at) }}</td>
+                            <td class="py-2 px-4">{{ formatDate(article.created_at) }}</td>
                             <td class="py-2 px-4 space-x-2">
-                                <router-link :to="`/articles/${article.id}`" class="text-blue-500 hover:underline">
+                                <router-link v-if="authStore.hasPermission('view article')"
+                                    :to="`/articles/${article.id}`" class="text-blue-500 hover:underline">
                                     View
                                 </router-link>
-                                <router-link :to="`/articles/${article.id}/edit`"
-                                    class="text-yellow-500 hover:underline">
+                                <router-link
+                                    v-if="authStore.hasPermission('edit article') && article.user_id === authStore.user.id"
+                                    :to="`/articles/${article.id}/edit`" class="text-yellow-500 hover:underline">
                                     Edit
                                 </router-link>
-                                <button @click="deleteArticle(article.id)" class="text-red-500 hover:underline">
+                                <button
+                                    v-if="(authStore.hasPermission('delete article') && article.user_id === authStore.user.id) || authStore.hasRole('admin')"
+                                    @click="deleteArticle(article.id)" class="text-red-500 hover:underline">
                                     Delete
                                 </button>
                             </td>
@@ -82,7 +86,9 @@
 import Layout from "../../../components/Layout.vue";
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
+import { useAuthStore } from "@/stores/auth";
 
+const authStore = useAuthStore();
 const articles = ref([]);
 const categories = ref([]);
 const searchQuery = ref("");
@@ -105,10 +111,18 @@ const formatDate = (dateString) => {
 
 // Computed property for filtering articles
 const filteredArticles = computed(() => {
+    if (authStore.hasRole('admin')) {
+        return articles.value.filter(article => {
+            const matchesSearch = article.title.toLowerCase().includes(searchQuery.value.toLowerCase());
+            const matchesCategory = selectedCategory.value ? article.category_id == selectedCategory.value : true;
+            return matchesSearch && matchesCategory;
+        });
+    }
     return articles.value.filter(article => {
         const matchesSearch = article.title.toLowerCase().includes(searchQuery.value.toLowerCase());
         const matchesCategory = selectedCategory.value ? article.category_id == selectedCategory.value : true;
-        return matchesSearch && matchesCategory;
+        const isOwner = article.user_id === authStore.user.id;
+        return matchesSearch && matchesCategory && isOwner;
     });
 });
 

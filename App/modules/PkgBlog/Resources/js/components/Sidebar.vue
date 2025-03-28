@@ -13,7 +13,7 @@
         <div class="p-4 flex-1">
             <ul class="space-y-2">
                 <li v-if="authStore.roles.includes('admin')">
-                    <router-link to="/" class="flex items-center p-2 hover:bg-gray-700 rounded">
+                    <router-link to="/dashboard" class="flex items-center p-2 hover:bg-gray-700 rounded">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -102,9 +102,6 @@ import axios from 'axios';
 import { useAuthStore } from "@/stores/auth";
 
 const authStore = useAuthStore();
-// const user = ref(null);
-// const roles = ref([]);
-// const permissions = ref([]); 
 
 // Sidebar collapsed state
 defineProps({
@@ -130,18 +127,4 @@ const logout = async () => {
     }
 };
 
-onMounted(() => {
-    if (!authStore.user) {
-        authStore.fetchUser();
-    }
-
-    // // Fetch permissions for the logged-in user
-    // if (authStore.user) {
-    //     user.value = authStore.user;
-    //     permissions.value = authStore.user.permissions || [];
-    //     roles.value = authStore.user.roles || [];
-    // }
-});
-
-// console.log(user.value);
 </script>
