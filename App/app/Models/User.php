@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -45,5 +46,12 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getProfileImageAttribute()
+    {
+        return $this->image
+            ? asset('storage/' . $this->image) 
+            : 'https://www.gravatar.com/avatar/' . md5(str::lower(trim($this->email))) . '?d=mp&s=200';
     }
 }

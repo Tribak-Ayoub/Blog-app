@@ -32,7 +32,7 @@ const routes = [
         meta: { requiresAuth: false }, // Public route
     },
     {
-        path: "/public/articles/show",
+        path: "/public/articles/:id",
         component: () =>
             import("../../modules/PkgBlog/Resources/js/pages/public/Show.vue"),
         meta: { requiresAuth: false }, // Public route

@@ -3,7 +3,10 @@ import { defineProps } from 'vue';
 
 defineProps({
     featuredArticle: Object,
-    formatDate: Function
+    formatDate: Function,
+    articlesCount: Number,
+    readersCount: Number,
+    categoriesCount: Number,
 });
 </script>
 
@@ -57,14 +60,15 @@ defineProps({
                                 <span
                                     class="inline-block px-3 py-1 bg-gray-100 text-xs font-semibold text-gray-600 rounded-full mb-3">Latest</span>
                                 <h3 class="text-lg font-bold text-gray-900 mb-4 line-clamp-2">{{ featuredArticle.title
-                                }}</h3>
+                                    }}</h3>
                                 <div class="flex items-center justify-between text-xs text-gray-500">
                                     <div class="flex items-center space-x-2">
-                                        <img :src="featuredArticle.author.avatar" :alt="featuredArticle.author.name"
+                                        <img :src="featuredArticle.user?.profile_image"
+                                            :alt="featuredArticle.user?.name"
                                             class="w-6 h-6 rounded-full object-cover" />
-                                        <span>{{ featuredArticle.author.name }}</span>
+                                        <span>{{ featuredArticle.user?.name }}</span>
                                     </div>
-                                    <span>{{ formatDate(featuredArticle.date) }}</span>
+                                    <span class="ms-3">{{ formatDate(featuredArticle.created_at) }}</span>
                                 </div>
                             </div>
                             <div class="sm:w-44 h-32 sm:h-auto">
@@ -80,15 +84,15 @@ defineProps({
             <div class="max-w-3xl mx-auto -mb-16 mt-12 relative z-10">
                 <div class="bg-white rounded-2xl shadow-xl flex justify-around py-6 px-4">
                     <div class="text-center">
-                        <span class="block text-3xl font-extrabold text-gray-900">200+</span>
+                        <span class="block text-3xl font-extrabold text-gray-900">{{ articlesCount }}+</span>
                         <span class="text-sm text-gray-500 font-medium">Articles</span>
                     </div>
                     <div class="text-center">
-                        <span class="block text-3xl font-extrabold text-gray-900">50k+</span>
+                        <span class="block text-3xl font-extrabold text-gray-900">{{ readersCount }}+</span>
                         <span class="text-sm text-gray-500 font-medium">Readers</span>
                     </div>
                     <div class="text-center">
-                        <span class="block text-3xl font-extrabold text-gray-900">24</span>
+                        <span class="block text-3xl font-extrabold text-gray-900">{{ categoriesCount }}</span>
                         <span class="text-sm text-gray-500 font-medium">Categories</span>
                     </div>
                 </div>

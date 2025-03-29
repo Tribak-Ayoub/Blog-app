@@ -62,8 +62,8 @@ Route::middleware('auth', 'web')->get('/user', function () {
     $user = auth()->user();
 
     return response()->json([
-        'user' => $user,
-        'roles' => $user->roles->pluck('name'), // Assuming roles relationship exists
-        'permissions' => $user->getAllPermissions()->pluck('name'), // Assuming Spatie permissions package
+        'user' => $user->only(['id', 'name', 'email', 'profile_image']),
+        'roles' => $user->roles->pluck('name'),
+        'permissions' => $user->getAllPermissions()->pluck('name'),
     ]);
 });
