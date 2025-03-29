@@ -8,9 +8,33 @@ const routes = [
         redirect: "/articles",
     },
     {
+        path: "/test",
+        component: () =>
+            import("../../modules/PkgBlog/Resources/js/pages/admin/article/test.vue"),
+        meta: { requiresAuth: false }, // Public route
+    },
+    {
+        path: "/test-dashboard",
+        component: () =>
+            import("../../modules/PkgBlog/Resources/js/pages/admin/TestDashboard.vue"),
+        meta: { requiresAuth: false }, // Public route
+    },
+    {
         path: "/home",
         component: () =>
-            import("../../modules/PkgBlog/Resources/js/pages/Test.vue"),
+            import("../../modules/PkgBlog/Resources/js/pages/public/Home.vue"),
+        meta: { requiresAuth: false }, // Public route
+    },
+    {
+        path: "/public/articles",
+        component: () =>
+            import("../../modules/PkgBlog/Resources/js/pages/public/Articles.vue"),
+        meta: { requiresAuth: false }, // Public route
+    },
+    {
+        path: "/public/articles/show",
+        component: () =>
+            import("../../modules/PkgBlog/Resources/js/pages/public/Show.vue"),
         meta: { requiresAuth: false }, // Public route
     },
     {
