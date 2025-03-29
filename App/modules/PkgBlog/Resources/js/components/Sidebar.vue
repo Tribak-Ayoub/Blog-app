@@ -71,7 +71,7 @@
         <!-- User Profile -->
         <div class="p-4 border-t border-gray-700 relative">
             <div class="flex items-center cursor-pointer" @click="toggleDropdown">
-                <img v-if="authStore.user" :src="authStore.user.avatar || ''" :alt="authStore.user.name || 'User'"
+                <img v-if="authStore.user" :src="authStore.user.profile_image" :alt="authStore.user.name || 'User'"
                     class="w-8 h-8 rounded-full" />
                 <div v-if="authStore.user && !isCollapsed" class="ml-3">
                     <p class="text-sm font-semibold">{{ authStore.user.name }}</p>

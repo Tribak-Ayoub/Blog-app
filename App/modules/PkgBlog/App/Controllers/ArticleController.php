@@ -20,7 +20,7 @@ class ArticleController extends BaseController
     public function __construct(ArticleService $articleService)
     {
         $this->articleService = $articleService;
-        $this->middleware('auth');
+        // $this->middleware('auth');
     }
 
     public function index(Request $request)
@@ -56,11 +56,13 @@ class ArticleController extends BaseController
     public function show(string $id)
     {
         $article = $this->articleService->getArticleById($id);
+        $relatedArticles = $this->articleService->getRelatedArticles($article);
         $commentableId = $article->id;
         $commentableType = Article::class;
 
         return response()->json([
-            'article' => $article
+            'article' => $article,
+            'relatedArticles' => $relatedArticles,
         ]);
     }
 

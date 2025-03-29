@@ -13,7 +13,8 @@ class ArticlePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('admin') || $user->hasRole('editor');
+        // return $user->hasRole('admin') || $user->hasRole('editor');
+        return false;
     }
 
     /**

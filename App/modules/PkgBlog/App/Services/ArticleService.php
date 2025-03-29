@@ -36,7 +36,11 @@ class ArticleService
 
     public function getArticleById($id)
     {
-        $article = Article::with(['category', 'tags', 'comments'])->findOrFail($id);
+        $article = Article::with(['user', 'category', 'tags', 'comments'])->findOrFail($id);
+
+        if ($article) {
+            $article->user->profile_image = $article->user->profile_image;
+        }
 
         $article->increment('view_count');
 
@@ -79,5 +83,14 @@ class ArticleService
     {
         $article->delete();
         return true;
+    }
+
+    public function getRelatedArticles(Article $article, int $limit = 3)
+    {
+        return Article::where('category_id', $article->category_id)
+            ->where('id', '!=', $article->id)
+            ->latest()
+            ->take($limit)
+            ->get();
     }
 }
