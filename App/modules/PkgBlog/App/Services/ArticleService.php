@@ -4,6 +4,7 @@ namespace Modules\PkgBlog\App\Services;
 
 use Illuminate\Support\Facades\Auth;
 use Modules\PkgBlog\App\Models\Article;
+use Modules\PkgBlog\App\Models\ArticleImage;
 
 class ArticleService
 {
@@ -36,7 +37,7 @@ class ArticleService
 
     public function getArticleById($id)
     {
-        $article = Article::with(['user', 'category', 'tags', 'comments'])->findOrFail($id);
+        $article = Article::with(['user', 'images', 'category', 'tags', 'comments'])->findOrFail($id);
 
         if ($article) {
             $article->user->profile_image = $article->user->profile_image;
@@ -47,7 +48,7 @@ class ArticleService
         return $article;
     }
 
-    public function createArticle(array $data)
+    public function createArticle(array $data, $images = [])
     {
         $article = Article::create([
             'title' => $data['title'],
@@ -55,6 +56,11 @@ class ArticleService
             'content' => $data['content'],
             'user_id' => Auth::id(),
         ]);
+
+        foreach ($images as $image) {
+            $path = $image->store('articles', 'public');
+            ArticleImage::create(['article_id' => $article->id, 'image_path' => $path]);
+        }
 
         if (!empty($data['tags'])) {
             $article->tags()->attach($data['tags']);

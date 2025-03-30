@@ -31,7 +31,7 @@
             <!-- Article Hero Section -->
             <div class="relative w-full h-[60vh] md:h-[70vh]">
                 <div class="absolute inset-0 bg-cover bg-center"
-                    :style="`background-image: url('${article.coverImage}')`">
+                    :style="{ backgroundImage: `url('/storage/${article.images.length ? article.images[0].image_path : 'default.jpg'}')` }">
                     <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/70 to-transparent"></div>
                 </div>
                 <div class="absolute inset-0 flex items-end">

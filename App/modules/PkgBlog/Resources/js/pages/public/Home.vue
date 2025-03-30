@@ -15,7 +15,8 @@
                 <div v-if="featuredArticle?.id"
                     class="bg-white rounded-xl overflow-hidden shadow-lg flex flex-col md:flex-row">
                     <div class="md:w-1/2 relative">
-                        <img :src="featuredArticle.image" :alt="featuredArticle.title"
+                        <img v-if="featuredArticle.images.length"
+                            :src="`/storage/${featuredArticle.images[0].image_path}`" :alt="featuredArticle.title"
                             class="w-full h-full object-cover" />
                         <span
                             class="absolute top-4 left-4 bg-gray-800 text-white px-4 py-1 rounded-full text-sm font-semibold">
@@ -79,7 +80,8 @@
                     <article v-for="article in filteredArticles" :key="article.id"
                         class="bg-white rounded-xl overflow-hidden shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-xl">
                         <div class="relative h-48">
-                            <img :src="article.image" :alt="article.title" class="w-full h-full object-cover" />
+                            <img v-if="article.images.length" :src="`/storage/${article.images[0].image_path}`"
+                                :alt="article.title" class="w-full h-full object-cover" />
                             <span
                                 class="absolute top-4 left-4 bg-gray-100 px-3 py-1 rounded-full text-xs font-medium text-gray-700">
                                 {{ article?.category?.name || 'Uncategorized' }}
@@ -114,7 +116,7 @@
         <PopularTags :popularTags="popularTags" />
 
         <!-- Footer -->
-        <PublicFooter :currentYear="currentYear" />
+        <PublicFooter :categories="categories"/>
     </div>
 
     <div v-else class="text-center">Loading...</div>
@@ -154,6 +156,7 @@ const fetchHomeData = async () => {
         categories.value = data.categories || [];
         popularTags.value = data.popularTags || [];
         recentArticles.value = data.recentArticles || [];
+        console.log(featuredArticle.value);
     } catch (error) {
         console.error("API Fetch Error:", error);
     } finally {

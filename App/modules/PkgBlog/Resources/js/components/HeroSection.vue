@@ -60,7 +60,7 @@ defineProps({
                                 <span
                                     class="inline-block px-3 py-1 bg-gray-100 text-xs font-semibold text-gray-600 rounded-full mb-3">Latest</span>
                                 <h3 class="text-lg font-bold text-gray-900 mb-4 line-clamp-2">{{ featuredArticle.title
-                                    }}</h3>
+                                }}</h3>
                                 <div class="flex items-center justify-between text-xs text-gray-500">
                                     <div class="flex items-center space-x-2">
                                         <img :src="featuredArticle.user?.profile_image"
@@ -72,8 +72,9 @@ defineProps({
                                 </div>
                             </div>
                             <div class="sm:w-44 h-32 sm:h-auto">
-                                <img :src="featuredArticle.image" :alt="featuredArticle.title"
-                                    class="w-full h-full object-cover" />
+                                <img v-if="featuredArticle.images.length"
+                                    :src="`/storage/${featuredArticle.images[0].image_path}`"
+                                    :alt="featuredArticle.title" class="w-full h-full object-cover" />
                             </div>
                         </div>
                     </div>
