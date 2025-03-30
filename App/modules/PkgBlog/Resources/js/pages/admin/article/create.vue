@@ -47,6 +47,13 @@
                     </div>
                 </div>
 
+                <div class="mb-4">
+                    <label class="block text-gray-700">Images</label>
+                    <div class="flex flex-wrap gap-2">
+                        <input type="file" @change="handleImageChange" multiple>
+                    </div>
+                </div>
+
                 <!-- Submit Button -->
                 <div class="flex items-center">
                     <button type="submit"
@@ -74,7 +81,8 @@ const form = ref({
     title: "",
     content: "",
     category_id: "",
-    tags: [] // Stores selected tag IDs
+    tags: [],
+    images: [],
 });
 
 // Error Messages
@@ -101,6 +109,10 @@ const fetchData = async () => {
     }
 };
 
+const handleImageChange = (event) => {
+    form.value.images = Array.from(event.target.files);
+};
+
 // Handle Form Submission
 const submitArticle = async () => {
     loading.value = true;
@@ -108,12 +120,18 @@ const submitArticle = async () => {
     successMessage.value = ""; // Reset success message
 
     try {
+        const formData = new FormData();
+        formData.append("title", form.value.title);
+        formData.append("content", form.value.content);
+        formData.append("category_id", form.value.category_id);
+        form.value.tags.forEach(tag => formData.append("tags[]", tag));
+        form.value.images.forEach(image => formData.append("images[]", image));
+
         // Send form data
-        await axios.post("/api/articles/store", {
-            title: form.value.title,
-            content: form.value.content,
-            category_id: form.value.category_id,
-            tags: form.value.tags // Ensure tags are sent as an array
+        await axios.post("/api/articles/store", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
         });
 
         // Show success message

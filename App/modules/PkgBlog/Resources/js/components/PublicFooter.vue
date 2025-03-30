@@ -65,7 +65,12 @@
                 <div>
                     <h3 class="text-lg font-semibold mb-5">Categories</h3>
                     <ul class="space-y-3">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Technology</a>
+                        <li v-for="category in categories" :key="category.id"
+                            class="text-gray-400 hover:text-white transition duration-200">
+                            {{ category.name }}
+                        </li>
+
+                        <!-- <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Technology</a>
                         </li>
                         <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Business</a>
                         </li>
@@ -74,7 +79,7 @@
                         <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Wellness</a>
                         </li>
                         <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Environment</a>
-                        </li>
+                        </li> -->
                     </ul>
                 </div>
                 <div>
@@ -97,6 +102,11 @@
 </template>
 <script setup>
 import { computed } from 'vue';
+import { defineProps } from 'vue';
 
+defineProps({
+    categories: Array,
+    currentYear: Number,
+});
 const currentYear = computed(() => new Date().getFullYear());
 </script>

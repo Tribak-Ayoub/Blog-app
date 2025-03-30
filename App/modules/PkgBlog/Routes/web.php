@@ -8,11 +8,6 @@ use Modules\PkgBlog\App\Controllers\ChartDataController;
 use Modules\PkgBlog\App\Controllers\HomeController;
 use Modules\PkgBlog\App\Controllers\TagController;
 
-Route::prefix('api/articles')->group(function () {
-    Route::get('/', [ArticleController::class, 'index'])->name('articles.index');
-    Route::get('/{article}', [ArticleController::class, 'show'])->name('articles.show');
-});
-
 Route::prefix('api/articles')->middleware(['auth', 'web'])->group(function () {
     Route::get('/create', [ArticleController::class, 'create'])->name('articles.create');
     Route::post('/store', [ArticleController::class, 'store'])->name('articles.store');
@@ -21,6 +16,10 @@ Route::prefix('api/articles')->middleware(['auth', 'web'])->group(function () {
     Route::delete('/{article}', [ArticleController::class, 'destroy'])->name('articles.destroy');
 });
 
+Route::prefix('api/articles')->group(function () {
+    Route::get('/', [ArticleController::class, 'index'])->name('articles.index');
+    Route::get('/{article}', [ArticleController::class, 'show'])->name('articles.show');
+});
 
 Route::prefix('api/categories')->middleware(['auth', 'web'])->group(function () {
     Route::get('/', [CategoryController::class, 'index'])->name('categories.index');

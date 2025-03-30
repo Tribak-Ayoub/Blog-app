@@ -85,7 +85,7 @@ class ArticleController extends BaseController
 
         $validated = $request->validated();
 
-        $article = $this->articleService->createArticle($validated);
+        $article = $this->articleService->createArticle($validated, $request->file('images') ?? []);
 
         return response()->json([
             'message' => "The article has been created",
