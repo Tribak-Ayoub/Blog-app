@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Modules\PkgBlog\App\Controllers\ArticleController;
+use Modules\PkgBlog\App\Controllers\ArticleImageController;
 use Modules\PkgBlog\App\Controllers\CategoryController;
 use Modules\PkgBlog\App\Controllers\ChartDataController;
 use Modules\PkgBlog\App\Controllers\HomeController;
@@ -11,6 +12,7 @@ use Modules\PkgBlog\App\Controllers\TagController;
 Route::prefix('api/articles')->middleware(['auth', 'web'])->group(function () {
     Route::get('/create', [ArticleController::class, 'create'])->name('articles.create');
     Route::post('/store', [ArticleController::class, 'store'])->name('articles.store');
+    Route::post('/upload-image', [ArticleImageController::class, 'store']);
     Route::get('/{article}/edit', [ArticleController::class, 'edit'])->name('articles.edit');
     Route::put('/{article}', [ArticleController::class, 'update'])->name('articles.update');
     Route::delete('/{article}', [ArticleController::class, 'destroy'])->name('articles.destroy');
