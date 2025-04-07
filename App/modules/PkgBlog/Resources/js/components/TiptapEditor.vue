@@ -1,10 +1,12 @@
-<script setup>
+<!-- <script setup>
 import { ref, watch, onBeforeUnmount } from 'vue'
 import { Editor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
+import { CharacterCount } from '@tiptap/extension-character-count';
+
 
 const props = defineProps({
     modelValue: String,
@@ -29,6 +31,9 @@ const editor = ref(
         },
     })
 )
+
+// console.log(editor.value.storage);
+console.log(editor.value)
 
 watch(() => props.modelValue, (value) => {
     if (editor.value && value !== editor.value.getHTML()) {
@@ -71,7 +76,6 @@ const activeTab = ref('write')
 
 <template>
     <div class="tiptap-editor rounded-xl border border-gray-200 shadow-sm bg-white overflow-hidden">
-        <!-- Editor Tabs -->
         <div class="flex border-b border-gray-200">
             <button @click="activeTab = 'write'" :class="[
                 'px-4 py-3 text-sm font-medium transition-colors flex items-center',
@@ -103,12 +107,11 @@ const activeTab = ref('write')
             </button>
         </div>
 
-        <!-- Toolbar -->
         <div v-if="activeTab === 'write'"
             class="flex flex-wrap items-center gap-1 p-2 bg-gray-50 border-b border-gray-200">
             <div class="flex items-center gap-1 px-1">
-                <!-- Text Formatting -->
-                <button @click="editor.chain().focus().toggleBold().run()"
+
+            <button @click="editor.chain().focus().toggleBold().run()"
                     :class="{ 'bg-blue-100 text-blue-700': editor.isActive('bold') }"
                     class="p-1.5 rounded-md hover:bg-gray-100 transition-colors" title="Bold">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -141,7 +144,6 @@ const activeTab = ref('write')
 
             <div class="w-px h-6 bg-gray-200 mx-1"></div>
 
-            <!-- Headings -->
             <div class="flex items-center gap-1 px-1">
                 <button @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
                     :class="{ 'bg-blue-100 text-blue-700': editor.isActive('heading', { level: 1 }) }"
@@ -181,7 +183,6 @@ const activeTab = ref('write')
 
             <div class="w-px h-6 bg-gray-200 mx-1"></div>
 
-            <!-- Lists -->
             <div class="flex items-center gap-1 px-1">
                 <button @click="editor.chain().focus().toggleBulletList().run()"
                     :class="{ 'bg-blue-100 text-blue-700': editor.isActive('bulletList') }"
@@ -224,7 +225,6 @@ const activeTab = ref('write')
 
             <div class="w-px h-6 bg-gray-200 mx-1"></div>
 
-            <!-- Code & Links -->
             <div class="flex items-center gap-1 px-1">
                 <button @click="editor.chain().focus().toggleCodeBlock().run()"
                     :class="{ 'bg-blue-100 text-blue-700': editor.isActive('codeBlock') }"
@@ -249,7 +249,6 @@ const activeTab = ref('write')
 
             <div class="w-px h-6 bg-gray-200 mx-1"></div>
 
-            <!-- Media & Utilities -->
             <div class="flex items-center gap-1 px-1">
                 <button @click="triggerFileInput" class="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
                     title="Insert Image">
@@ -292,16 +291,13 @@ const activeTab = ref('write')
             </div>
         </div>
 
-        <!-- Editor Content -->
         <div v-if="activeTab === 'write'" class="min-h-[300px] max-h-[600px] overflow-y-auto">
             <EditorContent :editor="editor" class="prose prose-sm max-w-none p-5 focus:outline-none" />
         </div>
 
-        <!-- Preview Mode -->
         <div v-else class="min-h-[300px] max-h-[600px] overflow-y-auto p-5 prose prose-sm max-w-none bg-white"
             v-html="editor.getHTML()"></div>
 
-        <!-- Editor Footer -->
         <div
             class="flex items-center justify-between px-4 py-2 bg-gray-50 border-t border-gray-200 text-xs text-gray-500">
             <div>
@@ -317,13 +313,11 @@ const activeTab = ref('write')
 </template>
 
 <style>
-/* Base editor styles */
 .tiptap-editor .ProseMirror {
     outline: none;
     min-height: 300px;
 }
 
-/* Placeholder styling */
 .tiptap-editor .ProseMirror p.is-editor-empty:first-child::before {
     content: attr(data-placeholder);
     float: left;
@@ -332,7 +326,6 @@ const activeTab = ref('write')
     height: 0;
 }
 
-/* Improve code block styling */
 .tiptap-editor .ProseMirror pre {
     background-color: #f3f4f6;
     border-radius: 0.5rem;
@@ -343,7 +336,6 @@ const activeTab = ref('write')
     overflow-x: auto;
 }
 
-/* Improve image styling */
 .tiptap-editor .ProseMirror img {
     max-width: 100%;
     height: auto;
@@ -351,7 +343,6 @@ const activeTab = ref('write')
     margin: 1rem 0;
 }
 
-/* Blockquote styling */
 .tiptap-editor .ProseMirror blockquote {
     border-left: 4px solid #e5e7eb;
     padding-left: 1rem;
@@ -359,7 +350,6 @@ const activeTab = ref('write')
     font-style: italic;
 }
 
-/* Heading styles */
 .tiptap-editor .ProseMirror h1 {
     font-size: 1.875rem;
     line-height: 2.25rem;
@@ -384,7 +374,6 @@ const activeTab = ref('write')
     font-weight: 600;
 }
 
-/* List styling */
 .tiptap-editor .ProseMirror ul {
     list-style-type: disc;
     padding-left: 1.5rem;
@@ -397,19 +386,466 @@ const activeTab = ref('write')
     margin: 1rem 0;
 }
 
-/* Link styling */
 .tiptap-editor .ProseMirror a {
     color: #2563eb;
     text-decoration: underline;
     text-underline-offset: 2px;
 }
 
-/* Code styling */
 .tiptap-editor .ProseMirror code {
     background-color: #f3f4f6;
     padding: 0.2rem 0.4rem;
     border-radius: 0.25rem;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     font-size: 0.875em;
+}
+</style> -->
+
+<template>
+    <div class="editor-container">
+        <!-- Toolbar -->
+        <div v-if="editor" class="editor-toolbar">
+            <!-- Text Formatting -->
+            <button @click="editor.chain().focus().toggleBold().run()"
+                :class="{ 'is-active': editor.isActive('bold') }">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
+                    <path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
+                </svg>
+            </button>
+            <button @click="editor.chain().focus().toggleItalic().run()"
+                :class="{ 'is-active': editor.isActive('italic') }">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="4" x2="10" y2="4"></line>
+                    <line x1="14" y1="20" x2="5" y2="20"></line>
+                    <line x1="15" y1="4" x2="9" y2="20"></line>
+                </svg>
+            </button>
+            <button @click="editor.chain().focus().toggleUnderline().run()"
+                :class="{ 'is-active': editor.isActive('underline') }">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3"></path>
+                    <line x1="4" y1="21" x2="20" y2="21"></line>
+                </svg>
+            </button>
+            <button @click="editor.chain().focus().toggleStrike().run()"
+                :class="{ 'is-active': editor.isActive('strike') }">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                </svg>
+            </button>
+
+            <!-- Headings -->
+            <button @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
+                :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }">
+                H1
+            </button>
+            <button @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
+                :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }">
+                H2
+            </button>
+            <button @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
+                :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }">
+                H3
+            </button>
+
+            <!-- Text Alignment -->
+            <button @click="editor.chain().focus().setTextAlign('left').run()"
+                :class="{ 'is-active': editor.isActive({ textAlign: 'left' }) }">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="9" y2="18"></line>
+                </svg>
+            </button>
+            <button @click="editor.chain().focus().setTextAlign('center').run()"
+                :class="{ 'is-active': editor.isActive({ textAlign: 'center' }) }">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="12" x2="12" y2="12"></line>
+                    <line x1="8" y1="6" x2="16" y2="6"></line>
+                    <line x1="6" y1="18" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <button @click="editor.chain().focus().setTextAlign('right').run()"
+                :class="{ 'is-active': editor.isActive({ textAlign: 'right' }) }">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="15" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+
+            <!-- Lists -->
+            <button @click="editor.chain().focus().toggleBulletList().run()"
+                :class="{ 'is-active': editor.isActive('bulletList') }">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+            </button>
+            <button @click="editor.chain().focus().toggleOrderedList().run()"
+                :class="{ 'is-active': editor.isActive('orderedList') }">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="10" y1="6" x2="21" y2="6"></line>
+                    <line x1="10" y1="12" x2="21" y2="12"></line>
+                    <line x1="10" y1="18" x2="21" y2="18"></line>
+                    <path d="M4 6h1v4"></path>
+                    <path d="M4 10h2"></path>
+                    <path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"></path>
+                </svg>
+            </button>
+
+            <!-- Code -->
+            <button @click="editor.chain().focus().toggleCodeBlock().run()"
+                :class="{ 'is-active': editor.isActive('codeBlock') }">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+            </button>
+
+            <!-- Blockquote -->
+            <button @click="editor.chain().focus().toggleBlockquote().run()"
+                :class="{ 'is-active': editor.isActive('blockquote') }">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+            </button>
+
+            <!-- Horizontal Rule -->
+            <button @click="editor.chain().focus().setHorizontalRule().run()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+            </button>
+
+            <!-- Link -->
+            <button @click="setLink" :class="{ 'is-active': editor.isActive('link') }">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                </svg>
+            </button>
+
+            <!-- Image Upload -->
+            <button @click="addImage">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+            </button>
+
+            <!-- YouTube Video -->
+            <button @click="addYoutubeVideo">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z">
+                    </path>
+                    <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
+                </svg>
+            </button>
+
+            <!-- Undo/Redo -->
+            <button @click="editor.chain().focus().undo().run()" :disabled="!editor.can().undo()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 10h10a4 4 0 0 1 0 8H5a4 4 0 0 1 0-8h1"></path>
+                    <polyline points="7 10 3 6 7 2"></polyline>
+                </svg>
+            </button>
+            <button @click="editor.chain().focus().redo().run()" :disabled="!editor.can().redo()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 10H11a4 4 0 0 0 0 8h8a4 4 0 0 0 0-8h1"></path>
+                    <polyline points="17 10 21 6 17 2"></polyline>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Bubble Menu (appears when selecting text) -->
+        <bubble-menu class="bubble-menu" :tippy-options="{ duration: 100 }" :editor="editor" v-if="editor">
+            <button @click="editor.chain().focus().toggleBold().run()"
+                :class="{ 'is-active': editor.isActive('bold') }">
+                Bold
+            </button>
+            <button @click="editor.chain().focus().toggleItalic().run()"
+                :class="{ 'is-active': editor.isActive('italic') }">
+                Italic
+            </button>
+            <button @click="editor.chain().focus().toggleUnderline().run()"
+                :class="{ 'is-active': editor.isActive('underline') }">
+                Underline
+            </button>
+            <button @click="setLink" :class="{ 'is-active': editor.isActive('link') }">
+                Link
+            </button>
+        </bubble-menu>
+
+        <!-- Editor Content -->
+        <editor-content :editor="editor" class="editor-content" />
+    </div>
+</template>
+
+<script setup>
+import { Editor, EditorContent, BubbleMenu } from '@tiptap/vue-3'
+import StarterKit from '@tiptap/starter-kit'
+import Underline from '@tiptap/extension-underline'
+import Link from '@tiptap/extension-link'
+import Image from '@tiptap/extension-image'
+import Youtube from '@tiptap/extension-youtube'
+import TextAlign from '@tiptap/extension-text-align'
+import { useToast } from 'vue-toastification'
+
+const props = defineProps({
+    modelValue: {
+        type: String,
+        default: '',
+    },
+})
+
+const emit = defineEmits(['update:modelValue'])
+const toast = useToast()
+
+const editor = ref(null)
+
+onMounted(() => {
+    editor.value = new Editor({
+        content: props.modelValue,
+        extensions: [
+            StarterKit,
+            Underline,
+            Link.configure({
+                openOnClick: false,
+                HTMLAttributes: {
+                    class: 'text-blue-500 hover:underline',
+                    rel: 'noopener noreferrer',
+                },
+            }),
+            Image.configure({
+                HTMLAttributes: {
+                    class: 'rounded-lg max-w-full h-auto',
+                },
+            }),
+            Youtube.configure({
+                inline: false,
+                HTMLAttributes: {
+                    class: 'rounded-lg',
+                },
+            }),
+            TextAlign.configure({
+                types: ['heading', 'paragraph'],
+            }),
+        ],
+        onUpdate: () => {
+            emit('update:modelValue', editor.value.getHTML())
+        },
+    })
+})
+
+onBeforeUnmount(() => {
+    editor.value?.destroy()
+})
+
+// Methods
+const setLink = () => {
+    const previousUrl = editor.value.getAttributes('link').href
+    const url = window.prompt('URL', previousUrl)
+
+    if (url === null) return
+
+    if (url === '') {
+        editor.value.chain().focus().extendMarkRange('link').unsetLink().run()
+        return
+    }
+
+    editor.value
+        .chain()
+        .focus()
+        .extendMarkRange('link')
+        .setLink({ href: url })
+        .run()
+}
+
+const addImage = async () => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = 'image/*'
+
+    input.onchange = async () => {
+        if (input.files?.length) {
+            const file = input.files[0]
+
+            try {
+                // Create a temporary placeholder
+                const placeholderId = `image-${Date.now()}`
+                editor.value.commands.setImage({
+                    src: '',
+                    'data-placeholder': placeholderId,
+                })
+
+                // Upload the image
+                const formData = new FormData()
+                formData.append('image', file)
+
+                const { data } = await axios.post('/api/upload-image', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                })
+
+                // Replace placeholder with actual image
+                const tr = editor.value.state.tr
+                const doc = editor.value.state.doc
+                let found = false
+
+                doc.descendants((node, pos) => {
+                    if (found) return false
+                    if (node.type.name === 'image' && node.attrs['data-placeholder'] === placeholderId) {
+                        tr.setNodeMarkup(pos, undefined, {
+                            ...node.attrs,
+                            src: data.url,
+                            alt: file.name,
+                            'data-placeholder': undefined,
+                        })
+                        found = true
+                        return false
+                    }
+                })
+
+                if (found) {
+                    editor.value.view.dispatch(tr)
+                }
+            } catch (error) {
+                toast.error('Failed to upload image')
+                console.error('Image upload error:', error)
+
+                // Remove the placeholder if upload fails
+                const tr = editor.value.state.tr
+                const doc = editor.value.state.doc
+
+                doc.descendants((node, pos) => {
+                    if (node.type.name === 'image' && node.attrs['data-placeholder'] === placeholderId) {
+                        tr.delete(pos, pos + node.nodeSize)
+                        return false
+                    }
+                })
+
+                editor.value.view.dispatch(tr)
+            }
+        }
+    }
+
+    input.click()
+}
+
+const addYoutubeVideo = () => {
+    const url = prompt('Enter YouTube URL:')
+
+    if (url) {
+        editor.value.commands.setYoutubeVideo({
+            src: url,
+            width: 640,
+            height: 480,
+        })
+    }
+}
+</script>
+
+<style scoped>
+.editor-container {
+    @apply border border-gray-200 rounded-lg overflow-hidden;
+}
+
+.editor-toolbar {
+    @apply flex flex-wrap items-center gap-1 p-2 border-b border-gray-200 bg-gray-50;
+}
+
+.editor-toolbar button {
+    @apply p-2 rounded text-gray-700 hover:bg-gray-200 transition-colors flex items-center justify-center;
+}
+
+.editor-toolbar button.is-active {
+    @apply bg-gray-200 text-blue-600;
+}
+
+.editor-toolbar button:disabled {
+    @apply opacity-50 cursor-not-allowed;
+}
+
+.bubble-menu {
+    @apply flex bg-white p-1 shadow-lg rounded-md border border-gray-200;
+}
+
+.bubble-menu button {
+    @apply px-2 py-1 text-sm text-gray-700 hover:bg-gray-100 rounded;
+}
+
+.bubble-menu button.is-active {
+    @apply bg-gray-100 text-blue-600;
+}
+
+.editor-content {
+    @apply min-h-[300px] p-4 outline-none;
+}
+
+/* ProseMirror specific styles */
+:deep(.ProseMirror) {
+    @apply min-h-[300px] outline-none;
+}
+
+:deep(.ProseMirror:focus) {
+    @apply outline-none;
+}
+
+:deep(.ProseMirror p) {
+    @apply mb-4;
+}
+
+:deep(.ProseMirror img) {
+    @apply max-w-full h-auto;
+}
+
+:deep(.ProseMirror img.ProseMirror-selectednode) {
+    @apply outline-2 outline-blue-500;
+}
+
+:deep(.ProseMirror .iframe-wrapper) {
+    @apply relative pb-[56.25%] h-0 overflow-hidden my-4;
+}
+
+:deep(.ProseMirror iframe) {
+    @apply absolute top-0 left-0 w-full h-full border-0;
+}
+
+:deep(.ProseMirror .text-align-left) {
+    @apply text-left;
+}
+
+:deep(.ProseMirror .text-align-center) {
+    @apply text-center;
+}
+
+:deep(.ProseMirror .text-align-right) {
+    @apply text-right;
 }
 </style>
