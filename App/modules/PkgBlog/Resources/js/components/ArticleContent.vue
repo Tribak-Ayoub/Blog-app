@@ -1,18 +1,91 @@
 <template>
-    <div v-if="content" class="mb-8 text-lg text-gray-800">
-        <p>{{ content }}</p>
-    </div>
+    <div class="article-content prose prose-lg max-w-none" v-html="sanitizedContent"></div>
 </template>
 
 <script setup>
-defineProps({
-    content: String,
+import { defineProps, computed } from 'vue';
+import DOMPurify from 'dompurify';
+
+const props = defineProps({
+    content: {
+        type: String,
+        default: ''
+    }
+});
+
+// Sanitize HTML content to prevent XSS attacks
+const sanitizedContent = computed(() => {
+    // If DOMPurify is not available (e.g., in SSR), return the content as is
+    if (typeof DOMPurify === 'undefined') {
+        console.warn('DOMPurify is not available. HTML content is not being sanitized.');
+        return props.content;
+    }
+
+    return DOMPurify.sanitize(props.content, {
+        ADD_TAGS: ['iframe'], // Allow iframe for embedded content like YouTube
+        ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling'] // Allow attributes for iframes
+    });
 });
 </script>
 
-<style scoped>
-p {
-    line-height: 1.7;
-    letter-spacing: 0.5px;
+<style>
+.article-content img {
+    @apply rounded-lg max-w-full h-auto my-4;
+}
+
+.article-content a {
+    @apply text-blue-600 hover:underline;
+}
+
+.article-content blockquote {
+    @apply border-l-4 border-gray-300 pl-4 italic my-4 text-gray-700;
+}
+
+.article-content pre {
+    @apply bg-gray-800 text-white p-4 rounded-lg my-4 overflow-x-auto;
+}
+
+.article-content code {
+    @apply font-mono bg-gray-100 px-1 py-0.5 rounded text-sm;
+}
+
+.article-content pre code {
+    @apply bg-transparent text-white p-0;
+}
+
+.article-content h1 {
+    @apply text-3xl font-bold mb-4 mt-6;
+}
+
+.article-content h2 {
+    @apply text-2xl font-bold mb-3 mt-5;
+}
+
+.article-content h3 {
+    @apply text-xl font-bold mb-3 mt-4;
+}
+
+.article-content ul {
+    @apply list-disc pl-5 mb-4;
+}
+
+.article-content ol {
+    @apply list-decimal pl-5 mb-4;
+}
+
+.article-content iframe {
+    @apply max-w-full rounded-lg my-4;
+}
+
+.article-content .text-align-center {
+    @apply text-center;
+}
+
+.article-content .text-align-right {
+    @apply text-right;
+}
+
+.article-content hr {
+    @apply my-6 border-t border-gray-300;
 }
 </style>
