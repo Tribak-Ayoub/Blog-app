@@ -253,8 +253,8 @@ onMounted(() => {
                 <!-- Featured Image -->
                 <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5">
                     <h3 class="text-sm font-semibold text-gray-700 mb-4">Featured Image</h3>
-                    <div v-if="article.featured_image" class="aspect-video bg-gray-100 rounded-md overflow-hidden">
-                        <img :src="article.featured_image" :alt="article.title" class="w-full h-full object-cover" />
+                    <div v-if="article?.images?.length" class="aspect-video bg-gray-100 rounded-md overflow-hidden">
+                        <img :src="`/storage/${article.images[0].image_path}`" :alt="article.title" class="w-full h-full object-cover" />
                     </div>
                     <div v-else class="aspect-video bg-gray-100 rounded-md flex items-center justify-center">
                         <span class="text-sm text-gray-500">No featured image</span>
@@ -296,7 +296,7 @@ onMounted(() => {
                         <div v-for="relatedArticle in relatedArticles" :key="relatedArticle.id"
                             class="flex items-start space-x-3">
                             <div class="w-16 h-16 bg-gray-100 rounded-md flex-shrink-0 overflow-hidden">
-                                <img v-if="relatedArticle.featured_image" :src="relatedArticle.featured_image"
+                                <img v-if="relatedArticle.images.length > 0" :src="`/storage/${relatedArticle.images[0].image_path}`"
                                     :alt="relatedArticle.title" class="w-full h-full object-cover" />
                             </div>
                             <div class="flex-1 min-w-0">
@@ -433,27 +433,15 @@ const fetchArticleData = async (id) => {
         const response = await axios.get(`/api/articles/${id}`);
         article.value = response.data.article;
         console.log(article.value);
+        relatedArticles.value = response.data.relatedArticles || [];
+        console.log(relatedArticles.value);
         comments.value = response.data.comments || [];
 
-        // Fetch related articles
-        fetchRelatedArticles(article.value.id, article.value.category_id);
     } catch (error) {
         console.error('Error fetching article data:', error);
         showToast('error', 'Error', 'Failed to load article data');
     } finally {
         loading.value = false;
-    }
-};
-
-// Fetch Related Articles
-const fetchRelatedArticles = async (articleId, categoryId) => {
-    try {
-        const response = await axios.get(`/api/articles/related`, {
-            params: { article_id: articleId, category_id: categoryId }
-        });
-        relatedArticles.value = response.data.articles || [];
-    } catch (error) {
-        console.error('Error fetching related articles:', error);
     }
 };
 

@@ -1,7 +1,5 @@
 <template>
     <div class="article-content prose prose-lg max-w-none" v-html="sanitizedContent"></div>
-    <pre>{{ sanitizedContent }}</pre>
-
 </template>
 
 <script setup>

@@ -93,7 +93,8 @@ class ArticleService
 
     public function getRelatedArticles(Article $article, int $limit = 3)
     {
-        return Article::where('category_id', $article->category_id)
+        return Article::with('images')
+            ->where('category_id', $article->category_id)
             ->where('id', '!=', $article->id)
             ->latest()
             ->take($limit)
