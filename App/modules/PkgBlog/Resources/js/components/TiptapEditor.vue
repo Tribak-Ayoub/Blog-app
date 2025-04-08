@@ -447,28 +447,15 @@ const addImage = async () => {
             const file = input.files[0];
 
             try {
-                // Create a temporary placeholder for image preview
-                const placeholderId = `image-${Date.now()}`;
+                // 1. Show temporary preview
                 const tempUrl = URL.createObjectURL(file);
-
-                // Insert the image with the placeholder src
                 editor.value.commands.setImage({
-                    src: tempUrl, // Show the preview before upload
-                    'data-placeholder': placeholderId,
-                    alt: file.name,
-                });
-                console.log('Inserted image attributes:', {
                     src: tempUrl,
-                    'data-placeholder': placeholderId,
-                    alt: file.name
+                    alt: file.name,
+                    'data-uploading': 'true' // Mark as uploading
                 });
 
-                console.log('Editor document before replacement:', editor.value.getHTML());
-
-                // console.log('Inserted temporary image with src:', tempUrl); // Log the blob URL for debugging
-                // console.log('Editor content after image insert:', editor.value.getHTML());
-
-                // Upload the image
+                // 2. Upload to server
                 const formData = new FormData();
                 formData.append('image', file);
 
@@ -477,51 +464,24 @@ const addImage = async () => {
                         'Content-Type': 'multipart/form-data',
                     },
                 });
-                // console.log('Image uploaded successfully. Response:', data);
-                console.log('Editor content after image insert:', editor.value.getHTML());
 
-                // Replace the placeholder with the real image URL once uploaded
-                const tr = editor.value.state.tr;
-                const doc = editor.value.state.doc;
-                let found = false;
-
-                doc.descendants((node, pos) => {
-                    console.log('Inspecting node:', node); // Log node to check if it matches
-                    if (found) return false;
-
-                    if (node.type.name === 'image') {
-                        const isTemporary = node.attrs['data-placeholder'] === placeholderId;
-                        console.log('Node is image and matches placeholder:', isTemporary); // Log if the node is temporary
-                        if (isTemporary) {
-                            console.log('Found image node to replace:', node);
-                            tr.setNodeMarkup(pos, undefined, {
-                                ...node.attrs,
-                                src: data.url, // Replace blob URL with uploaded image URL
-                                alt: file.name,
-                                'data-placeholder': undefined,  // Remove the placeholder
-                            });
-                            console.log('Replacing image with URL:', data.url); // Log the replacement URL
-                            found = true;
-                            return false;
-                        }
-                    }
+                // 3. Replace temporary URL with permanent one
+                editor.value.commands.updateAttributes('image', {
+                    src: data.url,
+                    'data-uploading': null
                 });
 
-                if (found) {
-                    // Dispatch the transaction to update the editor
-                    console.log('Dispatching transaction to update editor');
-                    editor.value.view.dispatch(tr);
-                } else {
-                    console.log('No image node found to replace');
-                }
+                // Clean up the blob URL
+                URL.revokeObjectURL(tempUrl);
 
             } catch (error) {
                 console.error('Image upload failed:', error);
-                // Optionally, show an error message to the user
+                // Remove the failed image
+                editor.value.commands.deleteSelection();
+                // Optionally show error to user
             }
         }
     };
-
     input.click();
 };
 

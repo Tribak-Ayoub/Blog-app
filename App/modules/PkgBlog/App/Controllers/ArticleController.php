@@ -85,11 +85,18 @@ class ArticleController extends BaseController
 
         $validated = $request->validated();
 
-        $article = $this->articleService->createArticle($validated, $request->file('images') ?? []);
+        // Get the featured image from request
+        $validated['featured_image'] = $request->file('featured_image');
+
+        $article = $this->articleService->createArticle(
+            $validated,
+            $request->file('images') ?? []
+        );
 
         return response()->json([
             'message' => "The article has been created",
-            'article' => $article
+            'article' => $article,
+            'featured_image_url' => $article->featured_image_url // Add this accessor
         ], Response::HTTP_CREATED);
     }
 

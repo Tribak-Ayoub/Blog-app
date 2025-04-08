@@ -1,5 +1,5 @@
 <template>
-    <div class="article-content prose prose-lg max-w-none" v-html="sanitizedContent"></div>
+    <div class="article-content prose prose-lg max-w-none" v-html="processedContent"></div>
 </template>
 
 <script setup>
@@ -13,19 +13,17 @@ const props = defineProps({
     }
 });
 
-const sanitizedContent = computed(() => {
-    if (typeof DOMPurify === 'undefined') {
-        console.warn('DOMPurify is not available. HTML content is not being sanitized.');
-        return props.content;
-    }
+const processedContent = computed(() => {
+    let content = props.content;
 
-    return DOMPurify.sanitize(props.content, {
+    // If you need any client-side processing
+    content = content.replace(/src="blob:[^"]+"/g, 'src="/images/image-placeholder.jpg"');
+
+    return DOMPurify.sanitize(content, {
         ADD_TAGS: ['iframe', 'img'],
         ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling', 'src', 'alt']
     });
 });
-// console.log("Sanitized Content value:", sanitizedContent.value);
-
 </script>
 
 <style>

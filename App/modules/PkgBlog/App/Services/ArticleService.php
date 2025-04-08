@@ -50,15 +50,27 @@ class ArticleService
 
     public function createArticle(array $data, $images = [])
     {
+        // Store featured image
+        $featuredImagePath = null;
+        if (isset($data['featured_image'])) {
+            $featuredImagePath = $data['featured_image']->store('articles/featured', 'public');
+        }
+
         $article = Article::create([
             'title' => $data['title'],
             'category_id' => $data['category_id'],
             'content' => $data['content'],
+            'description' => $data['description'],
+            'slug' => $data['slug'],
+            'featured_image' => $featuredImagePath, // Store the path
+            'status' => $data['status'],
+            'view_count' => 0,
             'user_id' => Auth::id(),
         ]);
 
+        // Handle additional images if needed
         foreach ($images as $image) {
-            $path = $image->store('articles', 'public');
+            $path = $image->store('articles/gallery', 'public');
             ArticleImage::create(['article_id' => $article->id, 'image_path' => $path]);
         }
 
@@ -76,6 +88,11 @@ class ArticleService
             'title' => $data['title'],
             'category_id' => $data['category_id'],
             'content' => $data['content'],
+            'description' => $data['description'],
+            'slug' => $data['slug'],
+            'featured_image' => $data['featured_image'] ?? null,
+            'status' => $data['status'],
+            'view_count' => $article->view_count,
         ]);
 
         if (isset($data['tags'])) {

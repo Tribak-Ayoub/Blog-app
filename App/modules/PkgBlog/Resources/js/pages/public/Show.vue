@@ -31,7 +31,7 @@
             <!-- Article Hero Section -->
             <div class="relative w-full h-[60vh] md:h-[70vh]">
                 <div class="absolute inset-0 bg-cover bg-center"
-                    :style="{ backgroundImage: `url('/storage/${article.images.length ? article.images[0].image_path : 'default.jpg'}')` }">
+                    :style="{ backgroundImage: `url('${article.featured_image_url ? article.featured_image_url : 'default.jpg'}')` }">
                     <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/70 to-transparent"></div>
                 </div>
                 <div class="absolute inset-0 flex items-end">
@@ -248,8 +248,8 @@
                             <div v-else-if="relatedArticles.length > 0" class="space-y-6">
                                 <div v-for="(relatedArticle, index) in relatedArticles" :key="index"
                                     class="flex space-x-4">
-                                    <img v-if="relatedArticle.images.length > 0"
-                                        :src="`/storage/${relatedArticle.images[0].image_path}`"
+                                    <img v-if="relatedArticle.featured_image_url"
+                                        :src="relatedArticle.featured_image_url"
                                         :alt="relatedArticle.title" class="w-20 h-20 object-cover rounded-lg" />
                                     <div>
                                         <h4 class="font-medium text-gray-900 line-clamp-2 mb-1">
@@ -277,7 +277,7 @@
             </div>
         </div>
         <!-- Footer -->
-        <PublicFooter :currentYear="currentYear" />
+        <PublicFooter :categories="categories" />
     </div>
 </template>
 

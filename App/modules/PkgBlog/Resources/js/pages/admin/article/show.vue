@@ -241,7 +241,7 @@ onMounted(() => {
                         </div>
                         <div>
                             <span class="text-sm text-gray-600 block mb-1">Meta Description</span>
-                            <p class="text-sm line-clamp-2">{{ article.meta_description || 'No meta description' }}</p>
+                            <p class="text-sm line-clamp-2">{{ article.description || 'No meta description' }}</p>
                         </div>
                         <div>
                             <span class="text-sm text-gray-600 block mb-1">Slug</span>
@@ -253,8 +253,8 @@ onMounted(() => {
                 <!-- Featured Image -->
                 <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5">
                     <h3 class="text-sm font-semibold text-gray-700 mb-4">Featured Image</h3>
-                    <div v-if="article?.images?.length" class="aspect-video bg-gray-100 rounded-md overflow-hidden">
-                        <img :src="`/storage/${article.images[0].image_path}`" :alt="article.title" class="w-full h-full object-cover" />
+                    <div v-if="article.featured_image_url" class="aspect-video bg-gray-100 rounded-md overflow-hidden">
+                        <img :src="article.featured_image_url" :alt="article.title" class="w-full h-full object-cover" />
                     </div>
                     <div v-else class="aspect-video bg-gray-100 rounded-md flex items-center justify-center">
                         <span class="text-sm text-gray-500">No featured image</span>
@@ -296,7 +296,7 @@ onMounted(() => {
                         <div v-for="relatedArticle in relatedArticles" :key="relatedArticle.id"
                             class="flex items-start space-x-3">
                             <div class="w-16 h-16 bg-gray-100 rounded-md flex-shrink-0 overflow-hidden">
-                                <img v-if="relatedArticle.images.length > 0" :src="`/storage/${relatedArticle.images[0].image_path}`"
+                                <img v-if="relatedArticle.featured_image_url" :src="relatedArticle.featured_image_url"
                                     :alt="relatedArticle.title" class="w-full h-full object-cover" />
                             </div>
                             <div class="flex-1 min-w-0">

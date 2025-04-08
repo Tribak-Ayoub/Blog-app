@@ -15,8 +15,8 @@
                 <div v-if="featuredArticle?.id"
                     class="bg-white rounded-xl overflow-hidden shadow-lg flex flex-col md:flex-row">
                     <div class="md:w-1/2 relative">
-                        <img v-if="featuredArticle.images.length"
-                            :src="`/storage/${featuredArticle.images[0].image_path}`" :alt="featuredArticle.title"
+                        <img v-if="featuredArticle.featured_image_url"
+                            :src="featuredArticle.featured_image_url" :alt="featuredArticle.title"
                             class="w-full h-full object-cover" />
                         <span
                             class="absolute top-4 left-4 bg-gray-800 text-white px-4 py-1 rounded-full text-sm font-semibold">
@@ -29,7 +29,7 @@
                             {{ featuredArticle?.category?.name || 'Uncategorized' }}
                         </span>
                         <h3 class="text-2xl font-bold mb-4">{{ featuredArticle.title }}</h3>
-                        <p class="text-gray-600 mb-6 flex-grow line-clamp-2">{{ featuredArticle.content }}</p>
+                        <p class="text-gray-600 mb-6 flex-grow">{{ featuredArticle.description }}</p>
                         <div class="flex justify-between items-center mb-6">
                             <div class="flex items-center space-x-3">
                                 <img :src="featuredArticle?.user?.profile_image" :alt="featuredArticle?.user?.name"
@@ -80,7 +80,7 @@
                     <article v-for="article in filteredArticles" :key="article.id"
                         class="bg-white rounded-xl overflow-hidden shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-xl">
                         <div class="relative h-48">
-                            <img v-if="article.images.length" :src="`/storage/${article.images[0].image_path}`"
+                            <img v-if="article.featured_image_url" :src="article.featured_image_url"
                                 :alt="article.title" class="w-full h-full object-cover" />
                             <span
                                 class="absolute top-4 left-4 bg-gray-100 px-3 py-1 rounded-full text-xs font-medium text-gray-700">
@@ -89,8 +89,8 @@
                         </div>
                         <div class="p-6">
                             <h3 class="text-xl font-bold mb-3 line-clamp-2">{{ article.title }}</h3>
-                            <p class="text-gray-600 mb-6 line-clamp-3">{{ article.content }}</p>
-                            <div class="flex justify-between items-center mb-4">
+                            <p class="text-gray-600 mb-6">{{ article.description }}</p>
+                            <div class="flex justify-between items-center mb-6">
                                 <div class="flex items-center space-x-2">
                                     <img :src="article?.user?.profile_image" :alt="article?.user?.name"
                                         class="w-8 h-8 rounded-full object-cover" />
@@ -100,7 +100,7 @@
                                     formatDate(article.created_at) }}</time>
                             </div>
                             <router-link :to="`/public/articles/${article.id}`"
-                                class="w-full bg-gray-800 text-white py-3 rounded-lg font-medium hover:bg-gray-900 transition duration-200">
+                                class="w-full bg-gray-800 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-900 transition duration-200">
                                 Read More
                             </router-link>
                         </div>

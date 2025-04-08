@@ -60,6 +60,26 @@
                             <p v-if="errors.title" class="mt-1.5 text-sm text-red-600">{{ errors.title[0] }}</p>
                         </div>
 
+                        <!-- Slug -->
+                        <div>
+                            <label for="slug" class="block text-sm font-medium text-gray-700 mb-1">
+                                Slug <span class="text-red-500">*</span>
+                            </label>
+                            <input id="slug" v-model="form.slug" type="text"
+                                class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                                placeholder="Enter a slug for your article" />
+                            <p v-if="errors.slug" class="mt-1.5 text-sm text-red-600">{{ errors.slug[0] }}</p>
+                        </div>
+
+                        <!-- Description -->
+                        <div>
+                            <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Meta
+                                Description <span class="text-red-500">*</span> </label>
+                            <textarea v-model="form.description" id="description"
+                                class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                                placeholder="Enter a meta description for your article"></textarea>
+                        </div>
+
                         <!-- Category & Tags -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Category -->
@@ -155,8 +175,13 @@
 
                         <!-- Featured Image -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Featured Image</label>
-                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-200 border-dashed rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group"
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                Featured Image <span class="text-red-500">*</span>
+                            </label>
+
+                            <!-- Upload area -->
+                            <div v-if="!form.featured_image"
+                                class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-200 border-dashed rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group"
                                 @click="triggerImageUpload">
                                 <div class="space-y-1 text-center">
                                     <svg xmlns="http://www.w3.org/2000/svg"
@@ -172,7 +197,7 @@
                                             class="relative cursor-pointer rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
                                             <span>Upload a file</span>
                                             <input type="file" ref="imageInput" @change="handleImageChange"
-                                                accept="image/*" multiple class="sr-only" />
+                                                accept="image/*" class="sr-only" />
                                         </label>
                                         <p class="pl-1">or drag and drop</p>
                                     </div>
@@ -180,28 +205,29 @@
                                 </div>
                             </div>
 
-                            <!-- Image Previews -->
-                            <div v-if="form.images.length > 0" class="mt-4">
-                                <h3 class="text-sm font-medium text-gray-700 mb-2">Selected Images</h3>
-                                <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-                                    <div v-for="(image, index) in form.images" :key="index" class="relative group">
-                                        <div
-                                            class="h-24 w-full rounded-md bg-gray-100 overflow-hidden border border-gray-200">
-                                            <img :src="getImagePreviewUrl(image)" class="h-full w-full object-cover"
-                                                :alt="`Selected image ${index + 1}`" />
-                                        </div>
-                                        <button type="button" @click="removeImage(index)"
-                                            class="absolute -top-2 -right-2 bg-red-100 text-red-600 rounded-full p-1 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24"
-                                                fill="none" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round">
-                                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                                <line x1="6" y1="6" x2="18" y2="18"></line>
-                                            </svg>
-                                        </button>
+                            <!-- Image Preview -->
+                            <div v-if="form.featured_image" class="mt-4">
+                                <div class="relative group">
+                                    <div
+                                        class="h-64 w-full rounded-md bg-gray-100 overflow-hidden border border-gray-200">
+                                        <img :src="getImagePreviewUrl(form.featured_image)"
+                                            class="h-full w-full object-cover" alt="Featured image preview" />
                                     </div>
+                                    <button type="button" @click="removeFeaturedImage"
+                                        class="absolute top-2 right-2 bg-white text-red-600 rounded-full p-1.5 shadow-sm opacity-80 hover:opacity-100 transition-opacity">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                                        </svg>
+                                    </button>
                                 </div>
+                                <p class="mt-2 text-sm text-gray-500">Click the image to change or the X button to
+                                    remove</p>
                             </div>
+                            <p v-if="errors.featured_image" class="mt-1.5 text-sm text-red-600">{{
+                                errors.featured_image[0] }}</p>
                         </div>
                     </div>
 
@@ -299,9 +325,11 @@ const router = useRouter();
 const form = ref({
     title: "",
     content: "",
+    slug: "",
+    description: "",
     category_id: "",
     tags: [],
-    images: [],
+    featured_image: null,
     status: "published" // Default status
 });
 
@@ -346,8 +374,9 @@ const triggerImageUpload = () => {
 };
 
 const handleImageChange = (event) => {
-    const newImages = Array.from(event.target.files);
-    form.value.images = [...form.value.images, ...newImages];
+    if (event.target.files.length > 0) {
+        form.value.featured_image = event.target.files[0];
+    }
     // Reset the input to allow selecting the same file again
     event.target.value = null;
 };
@@ -361,13 +390,12 @@ const getImagePreviewUrl = (image) => {
     return image;
 };
 
-const removeImage = (index) => {
+const removeFeaturedImage = () => {
     // If it's a File object with a URL, revoke it to prevent memory leaks
-    const image = form.value.images[index];
-    if (image instanceof File && image._url) {
-        URL.revokeObjectURL(image._url);
+    if (form.value.featured_image instanceof File) {
+        URL.revokeObjectURL(form.value.featured_image);
     }
-    form.value.images.splice(index, 1);
+    form.value.featured_image = null;
 };
 
 const addTag = () => {
@@ -406,8 +434,8 @@ const fetchData = async () => {
 // Handle Form Submission
 const submitArticle = async () => {
     loading.value = true;
-    errors.value = {}; // Reset errors
-    successMessage.value = ""; // Reset success message
+    errors.value = {};
+    successMessage.value = "";
 
     try {
         // Validate form
@@ -423,6 +451,18 @@ const submitArticle = async () => {
             errors.value.content = ["Content is required"];
         }
 
+        if (!form.value.slug.trim()) {
+            errors.value.slug = ["Slug is required"];
+        }
+
+        if (!form.value.description.trim()) {
+            errors.value.description = ["Meta description is required"];
+        }
+
+        if (!form.value.featured_image) {
+            errors.value.featured_image = ["Featured image is required"];
+        }
+
         // If there are validation errors, stop submission
         if (Object.keys(errors.value).length > 0) {
             loading.value = false;
@@ -432,11 +472,15 @@ const submitArticle = async () => {
         const formData = new FormData();
         formData.append("title", form.value.title);
         formData.append("content", form.value.content);
+        formData.append("slug", form.value.slug);
+        formData.append("description", form.value.description);
         formData.append("category_id", form.value.category_id);
         formData.append("status", form.value.status);
 
         form.value.tags.forEach(tag => formData.append("tags[]", tag));
-        form.value.images.forEach(image => formData.append("images[]", image));
+        if (form.value.featured_image) {
+            formData.append("featured_image", form.value.featured_image);
+        }
 
         // Send form data
         await axios.post("/api/articles/store", formData, {
@@ -466,11 +510,9 @@ const submitArticle = async () => {
 
 // Clean up object URLs when component is unmounted
 onBeforeUnmount(() => {
-    form.value.images.forEach(image => {
-        if (image instanceof File && image._url) {
-            URL.revokeObjectURL(image._url);
-        }
-    });
+    if (form.value.featured_image instanceof File) {
+        URL.revokeObjectURL(form.value.featured_image);
+    }
 });
 
 onMounted(fetchData);
