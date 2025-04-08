@@ -1,5 +1,7 @@
 <template>
     <div class="article-content prose prose-lg max-w-none" v-html="sanitizedContent"></div>
+    <pre>{{ sanitizedContent }}</pre>
+
 </template>
 
 <script setup>
@@ -13,19 +15,19 @@ const props = defineProps({
     }
 });
 
-// Sanitize HTML content to prevent XSS attacks
 const sanitizedContent = computed(() => {
-    // If DOMPurify is not available (e.g., in SSR), return the content as is
     if (typeof DOMPurify === 'undefined') {
         console.warn('DOMPurify is not available. HTML content is not being sanitized.');
         return props.content;
     }
 
     return DOMPurify.sanitize(props.content, {
-        ADD_TAGS: ['iframe'], // Allow iframe for embedded content like YouTube
-        ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling'] // Allow attributes for iframes
+        ADD_TAGS: ['iframe', 'img'],
+        ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling', 'src', 'alt']
     });
 });
+// console.log("Sanitized Content value:", sanitizedContent.value);
+
 </script>
 
 <style>
