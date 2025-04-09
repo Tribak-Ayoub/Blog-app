@@ -14,7 +14,12 @@ return new class extends Migration
         Schema::create('articles', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->text('content');
+            $table->longText('content');
+            $table->text('description');
+            $table->string('slug')->unique();
+            $table->string('featured_image')->nullable();
+            $table->integer('view_count')->default(0);
+            $table->enum('status', ['draft', 'published'])->default('draft');
             $table->foreignId('user_id')->constrained();
             $table->foreignId('category_id')->constrained();
             $table->softDeletes();

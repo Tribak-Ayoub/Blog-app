@@ -11,7 +11,36 @@ class Article extends Model
     /** @use HasFactory<\Database\Factories\ArticleFactory> */
     use HasFactory;
 
-    protected $fillable = ['title', 'content', 'user_id', 'category_id'];
+    protected $fillable = ['title', 'content', 'user_id', 'category_id', 'description', 'slug', 'featured_image', 'view_count', 'status'];
+
+    protected $appends = ['featured_image_url'];
+
+    public function getFeaturedImageUrlAttribute()
+    {
+        if (!$this->featured_image) {
+            return asset('images/default-article.jpg'); // Default image
+        }
+
+        return asset('storage/' . $this->featured_image);
+    }
+
+    // In your Article model
+    public function getProcessedContentAttribute()
+    {
+        $content = $this->content;
+
+        // Convert any remaining blob URLs to permanent URLs if needed
+        $content = preg_replace_callback(
+            '/src="(blob:[^"]+)"/',
+            function ($matches) {
+                // You might want to handle failed uploads here
+                return 'src="' . asset('images/image-upload-failed.jpg') . '"';
+            },
+            $content
+        );
+
+        return $content;
+    }
 
     public function user()
     {

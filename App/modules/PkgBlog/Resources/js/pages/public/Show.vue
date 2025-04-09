@@ -31,7 +31,7 @@
             <!-- Article Hero Section -->
             <div class="relative w-full h-[60vh] md:h-[70vh]">
                 <div class="absolute inset-0 bg-cover bg-center"
-                    :style="{ backgroundImage: `url('/storage/${article.images.length ? article.images[0].image_path : 'default.jpg'}')` }">
+                    :style="{ backgroundImage: `url('${article.featured_image_url ? article.featured_image_url : 'default.jpg'}')` }">
                     <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/70 to-transparent"></div>
                 </div>
                 <div class="absolute inset-0 flex items-end">
@@ -194,7 +194,7 @@
                                                 <div class="flex items-center justify-between mb-2">
                                                     <h4 class="font-medium text-gray-900">{{ comment.name }}</h4>
                                                     <span class="text-sm text-gray-500">{{ formatDate(comment.date)
-                                                    }}</span>
+                                                        }}</span>
                                                 </div>
                                                 <p class="text-gray-700">{{ comment.text }}</p>
                                             </div>
@@ -248,8 +248,9 @@
                             <div v-else-if="relatedArticles.length > 0" class="space-y-6">
                                 <div v-for="(relatedArticle, index) in relatedArticles" :key="index"
                                     class="flex space-x-4">
-                                    <img :src="relatedArticle.image" :alt="relatedArticle.title"
-                                        class="w-20 h-20 object-cover rounded-lg" />
+                                    <img v-if="relatedArticle.featured_image_url"
+                                        :src="relatedArticle.featured_image_url"
+                                        :alt="relatedArticle.title" class="w-20 h-20 object-cover rounded-lg" />
                                     <div>
                                         <h4 class="font-medium text-gray-900 line-clamp-2 mb-1">
                                             <a :href="`/articles/${relatedArticle.id}`" class="hover:text-blue-600">{{
@@ -276,7 +277,7 @@
             </div>
         </div>
         <!-- Footer -->
-        <PublicFooter :currentYear="currentYear" />
+        <PublicFooter :categories="categories" />
     </div>
 </template>
 
@@ -311,6 +312,7 @@ const fetchArticle = async () => {
         const response = await axios.get(`/api/articles/${articleId}`);
         article.value = response.data.article;
         relatedArticles.value = response.data.relatedArticles;
+        console.log(relatedArticles.value);
     } catch (err) {
         console.error('Error fetching article:', err);
         error.value = err.response?.data?.message || 'Failed to load article. Please try again later.';

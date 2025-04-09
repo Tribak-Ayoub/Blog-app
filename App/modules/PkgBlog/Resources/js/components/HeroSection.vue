@@ -72,8 +72,8 @@ defineProps({
                                 </div>
                             </div>
                             <div class="sm:w-44 h-32 sm:h-auto">
-                                <img v-if="featuredArticle.images.length"
-                                    :src="`/storage/${featuredArticle.images[0].image_path}`"
+                                <img v-if="featuredArticle.featured_image_url"
+                                    :src="featuredArticle.featured_image_url"
                                     :alt="featuredArticle.title" class="w-full h-full object-cover" />
                             </div>
                         </div>
