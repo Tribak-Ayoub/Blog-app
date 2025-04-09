@@ -9,15 +9,22 @@ class ArticleImageController extends BaseController
 {
     public function store(Request $request)
     {
-        if ($request->hasFile('image')) {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120'
+        ]);
+
+        try {
             $path = $request->file('image')->store('articles/gallery', 'public');
             $url = asset('storage/' . $path);
+
             return response()->json([
                 'url' => $url,
                 'path' => $path
             ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Upload failed: ' . $e->getMessage()
+            ], 500);
         }
-
-        return response()->json(['error' => 'No image uploaded'], 400);
     }
 }

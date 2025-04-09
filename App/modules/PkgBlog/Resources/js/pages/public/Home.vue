@@ -89,7 +89,7 @@
                         </div>
                         <div class="p-6">
                             <h3 class="text-xl font-bold mb-3 line-clamp-2">{{ article.title }}</h3>
-                            <p class="text-gray-600 mb-6">{{ article.description }}</p>
+                            <p class="text-gray-600 mb-6 line-clamp-3">{{ article.description }}</p>
                             <div class="flex justify-between items-center mb-6">
                                 <div class="flex items-center space-x-2">
                                     <img :src="article?.user?.profile_image" :alt="article?.user?.name"

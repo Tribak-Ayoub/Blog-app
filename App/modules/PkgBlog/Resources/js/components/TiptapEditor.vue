@@ -441,47 +441,48 @@ const addImage = async () => {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
-
+    
     input.onchange = async () => {
-        if (input.files?.length) {
-            const file = input.files[0];
+        if (!input.files?.length) return;
+        
+        const file = input.files[0];
+        const tempUrl = URL.createObjectURL(file);
+        
+        try {
+            // 1. Insert temporary image
+            editor.value.commands.setImage({
+                src: tempUrl,
+                alt: file.name,
+                'data-status': 'uploading'
+            });
 
-            try {
-                // 1. Show temporary preview
-                const tempUrl = URL.createObjectURL(file);
-                editor.value.commands.setImage({
-                    src: tempUrl,
-                    alt: file.name,
-                    'data-uploading': 'true' // Mark as uploading
-                });
+            // 2. Upload to server
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            const { data } = await axios.post('/api/articles/upload-image', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
 
-                // 2. Upload to server
-                const formData = new FormData();
-                formData.append('image', file);
+            // 3. Replace with permanent URL
+            editor.value.commands.updateAttributes('image', {
+                src: data.url,
+                'data-status': 'uploaded'
+            });
 
-                const { data } = await axios.post('/api/articles/upload-image', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                });
+            // 4. Clean up blob URL
+            URL.revokeObjectURL(tempUrl);
 
-                // 3. Replace temporary URL with permanent one
-                editor.value.commands.updateAttributes('image', {
-                    src: data.url,
-                    'data-uploading': null
-                });
-
-                // Clean up the blob URL
-                URL.revokeObjectURL(tempUrl);
-
-            } catch (error) {
-                console.error('Image upload failed:', error);
-                // Remove the failed image
-                editor.value.commands.deleteSelection();
-                // Optionally show error to user
-            }
+        } catch (error) {
+            console.error('Upload failed:', error);
+            // Mark as failed or remove the image
+            editor.value.commands.updateAttributes('image', {
+                'data-status': 'failed',
+                src: '/images/upload-failed.jpg'
+            });
         }
     };
+
     input.click();
 };
 
