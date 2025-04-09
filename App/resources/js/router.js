@@ -7,12 +7,12 @@ const routes = [
         path: "/",
         redirect: "/articles",
     },
-    {
-        path: "/test",
-        component: () =>
-            import("../../modules/PkgBlog/Resources/js/pages/admin/article/test.vue"),
-        meta: { requiresAuth: false }, // Public route
-    },
+    // {
+    //     path: "/test",
+    //     component: () =>
+    //         import("../../modules/PkgBlog/Resources/js/pages/admin/article/test.vue"),
+    //     meta: { requiresAuth: false }, // Public route
+    // },
     {
         path: "/test-dashboard",
         component: () =>
@@ -33,6 +33,7 @@ const routes = [
     },
     {
         path: "/public/articles/:id",
+        name: 'article-detail',
         component: () =>
             import("../../modules/PkgBlog/Resources/js/pages/public/Show.vue"),
         meta: { requiresAuth: false }, // Public route
