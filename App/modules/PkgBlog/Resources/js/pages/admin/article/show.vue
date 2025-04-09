@@ -471,7 +471,7 @@ const handleClickOutside = (event) => {
 
 // Edit Article
 const editArticle = () => {
-    router.push(`/admin/articles/${article.value.id}/edit`);
+    router.push(`/articles/${article.value.id}/edit`);
 };
 
 // Update Article Status

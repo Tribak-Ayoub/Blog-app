@@ -118,17 +118,27 @@ class ArticleController extends BaseController
 
     public function update(ArticleRequest $request, $id)
     {
-        $validated = $request->validated();
-
         $article = Article::findOrFail($id);
         $this->authorize('update', $article);
-        $this->articleService->updateArticle($article, $validated);
-
+    
+        $validated = $request->validated();
+    
+        // Handle optional featured image upload
+        if ($request->hasFile('featured_image')) {
+            $validated['featured_image'] = $request->file('featured_image');
+        }
+    
+        // Handle gallery images if provided
+        $images = $request->file('images') ?? [];
+    
+        $this->articleService->updateArticle($article, $validated, $images);
+    
         return response()->json([
             'message' => "The article has been updated",
-            'article' => $article
+            'article' => $article->fresh(),
+            'featured_image_url' => $article->featured_image_url
         ]);
-    }
+    }    
 
     public function destroy(string $id)
     {
