@@ -51,14 +51,16 @@
                 <div>
                     <h3 class="text-lg font-semibold mb-5">Navigation</h3>
                     <ul class="space-y-3">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Home</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Articles</a>
+                        <li><router-link :to="{ name: 'home' }"
+                                class="text-gray-400 hover:text-white transition duration-200">Home</router-link></li>
+                        <li><router-link :to="{ name: 'articles' }"
+                                class="text-gray-400 hover:text-white transition duration-200">Articles</router-link>
                         </li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Categories</a>
+                        <li><router-link class="text-gray-400 hover:text-white transition duration-200">About
+                                Us</router-link>
                         </li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">About Us</a>
-                        </li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Contact</a>
+                        <li><router-link
+                                class="text-gray-400 hover:text-white transition duration-200">Contact</router-link>
                         </li>
                     </ul>
                 </div>
@@ -69,17 +71,6 @@
                             class="text-gray-400 hover:text-white transition duration-200">
                             {{ category.name }}
                         </li>
-
-                        <!-- <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Technology</a>
-                        </li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Business</a>
-                        </li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Design</a>
-                        </li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Wellness</a>
-                        </li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-200">Environment</a>
-                        </li> -->
                     </ul>
                 </div>
                 <div>

@@ -4,7 +4,7 @@
             <!-- Header: Title + Create Button -->
             <div class="flex justify-between items-center">
                 <h2 class="text-2xl font-semibold text-gray-800">Articles</h2>
-                <router-link to="/articles/create"
+                <router-link :to="{ name: 'admin-article-create' }"
                     class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition">
                     + Create Article
                 </router-link>
@@ -55,12 +55,14 @@
                             <td class="py-2 px-4">{{ formatDate(article.created_at) }}</td>
                             <td class="py-2 px-4 space-x-2">
                                 <router-link v-if="authStore.hasPermission('view article')"
-                                    :to="`/articles/${article.id}`" class="text-blue-500 hover:underline">
+                                    :to="{ name: 'admin-article-detail', params: { id: article.id } }"
+                                    class="text-blue-500 hover:underline">
                                     View
                                 </router-link>
                                 <router-link
                                     v-if="authStore.hasPermission('edit article') && article.user_id === authStore.user.id"
-                                    :to="`/articles/${article.id}/edit`" class="text-yellow-500 hover:underline">
+                                    :to="{ name: 'admin-article-edit', params: { id: article.id } }"
+                                    class="text-yellow-500 hover:underline">
                                     Edit
                                 </router-link>
                                 <button

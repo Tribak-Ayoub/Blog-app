@@ -432,9 +432,7 @@ const fetchArticleData = async (id) => {
     try {
         const response = await axios.get(`/api/articles/${id}`);
         article.value = response.data.article;
-        console.log(article.value);
         relatedArticles.value = response.data.relatedArticles || [];
-        console.log(relatedArticles.value);
         comments.value = response.data.comments || [];
 
     } catch (error) {

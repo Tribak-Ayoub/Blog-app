@@ -271,13 +271,13 @@ onMounted(fetchArticles);
             class="flex flex-col overflow-hidden rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl hover:translate-y-[-4px] bg-white"
           >
             <div class="flex-shrink-0">
-              <a :href="`/article/${article.slug}`" class="block">
+              <router-link :to="{name: 'article-detail', params: {id: article.id}}" class="block">
                 <img 
                   :src="article.featured_image_url || '/placeholder.jpg'" 
                   :alt="article.title"
                   class="h-48 w-full object-cover"
                 />
-              </a>
+              </router-link>
             </div>
             <div class="flex-1 p-6 flex flex-col justify-between">
               <div class="flex-1">
@@ -289,14 +289,14 @@ onMounted(fetchArticles);
                     {{ formatDate(article.created_at) }}
                   </span>
                 </div>
-                <a :href="`/article/${article.slug}`" class="block">
+                <router-link :to="{name: 'article-detail', params: {id: article.id}}" class="block">
                   <h3 class="text-xl font-semibold text-gray-900 hover:text-indigo-600 transition-colors">
                     {{ article.title }}
                   </h3>
                   <p class="mt-3 text-base text-gray-500 line-clamp-3">
                     {{ article.description }}
                   </p>
-                </a>
+                </router-link>
               </div>
               <div class="mt-6 flex items-center">
                 <div class="flex-shrink-0">
@@ -327,7 +327,7 @@ onMounted(fetchArticles);
             class="flex flex-col sm:flex-row overflow-hidden rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl hover:translate-y-[-4px] bg-white"
           >
             <div class="flex-shrink-0">
-              <router-link :to="`/public/articles/${article.id}`" class="block">
+              <router-link :to="{name: 'article-detail', params: {id: article.id}}" class="block">
                 <img 
                   :src="article.featured_image_url || '/placeholder.jpg'" 
                   :alt="article.title"
@@ -345,14 +345,14 @@ onMounted(fetchArticles);
                     {{ formatDate(article.created_at) }}
                   </span>
                 </div>
-                <a :href="`/article/${article.slug}`" class="block">
+                <router-link :to="{name: 'article-detail', params: {id: article.id}}" class="block">
                   <h3 class="text-xl font-semibold text-gray-900 hover:text-indigo-600 transition-colors">
                     {{ article.title }}
                   </h3>
                   <p class="mt-3 text-base text-gray-500">
                     {{ article.description }}
                   </p>
-                </a>
+                </router-link>
               </div>
               <div class="mt-6 flex items-center">
                 <div class="flex-shrink-0">
@@ -479,7 +479,6 @@ onMounted(fetchArticles);
       if (response.data && response.data.articles) {
         if (response.data.articles.data) {
           articles.value = response.data.articles.data;
-          console.log(articles.value);
         } else {
           // Handle case where articles might be directly in the response
           articles.value = Array.isArray(response.data.articles) ? response.data.articles : [];

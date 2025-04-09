@@ -4,42 +4,40 @@ import { watchEffect } from "vue";
 
 const routes = [
     {
-        path: "/",
-        redirect: "/articles",
-    },
-    // {
-    //     path: "/test",
-    //     component: () =>
-    //         import("../../modules/PkgBlog/Resources/js/pages/admin/article/test.vue"),
-    //     meta: { requiresAuth: false }, // Public route
-    // },
-    {
         path: "/test-dashboard",
+        name: "test-dashboard",
         component: () =>
-            import("../../modules/PkgBlog/Resources/js/pages/admin/TestDashboard.vue"),
-        meta: { requiresAuth: false }, // Public route
+            import(
+                "../../modules/PkgBlog/Resources/js/pages/admin/TestDashboard.vue"
+            ),
+        meta: { requiresAuth: false },
     },
     {
-        path: "/home",
+        path: "/",
+        name: "home",
         component: () =>
             import("../../modules/PkgBlog/Resources/js/pages/public/Home.vue"),
-        meta: { requiresAuth: false }, // Public route
+        meta: { requiresAuth: false },
     },
     {
-        path: "/public/articles",
+        path: "/articles",
+        name: "articles",
         component: () =>
-            import("../../modules/PkgBlog/Resources/js/pages/public/Articles.vue"),
-        meta: { requiresAuth: false }, // Public route
+            import(
+                "../../modules/PkgBlog/Resources/js/pages/public/Articles.vue"
+            ),
+        meta: { requiresAuth: false },
     },
     {
-        path: "/public/articles/:id",
-        name: 'article-detail',
+        path: "/articles/:id",
+        name: "article-detail",
         component: () =>
             import("../../modules/PkgBlog/Resources/js/pages/public/Show.vue"),
-        meta: { requiresAuth: false }, // Public route
+        meta: { requiresAuth: false },
     },
     {
-        path: "/dashboard",
+        path: "/admin/dashboard",
+        name: "admin-dashboard",
         component: () =>
             import(
                 "../../modules/PkgBlog/Resources/js/pages/admin/Dashboard.vue"
@@ -47,7 +45,8 @@ const routes = [
         meta: { requiresAuth: true, role: "admin" },
     },
     {
-        path: "/articles",
+        path: "/admin/articles",
+        name: "admin-articles",
         component: () =>
             import(
                 "../../modules/PkgBlog/Resources/js/pages/admin/article/index.vue"
@@ -55,7 +54,8 @@ const routes = [
         meta: { requiresAuth: true, permission: "view article" },
     },
     {
-        path: "/articles/create",
+        path: "/admin/articles/create",
+        name: "admin-article-create",
         component: () =>
             import(
                 "../../modules/PkgBlog/Resources/js/pages/admin/article/create.vue"
@@ -63,7 +63,8 @@ const routes = [
         meta: { requiresAuth: true, permission: "create article" },
     },
     {
-        path: "/articles/:id",
+        path: "/admin/articles/:id",
+        name: "admin-article-detail",
         component: () =>
             import(
                 "../../modules/PkgBlog/Resources/js/pages/admin/article/show.vue"
@@ -71,7 +72,8 @@ const routes = [
         meta: { requiresAuth: true, permission: "view article" },
     },
     {
-        path: "/articles/:id/edit",
+        path: "/admin/articles/:id/edit",
+        name: "admin-article-edit",
         component: () =>
             import(
                 "../../modules/PkgBlog/Resources/js/pages/admin/article/edit.vue"
@@ -79,7 +81,8 @@ const routes = [
         meta: { requiresAuth: true, permission: "edit article" },
     },
     {
-        path: "/categories",
+        path: "/admin/categories",
+        name: "admin-categories",
         component: () =>
             import(
                 "../../modules/PkgBlog/Resources/js/pages/admin/category/index.vue"
@@ -87,7 +90,8 @@ const routes = [
         meta: { requiresAuth: true, permission: "view category" },
     },
     {
-        path: "/categories/:id/edit",
+        path: "/admin/categories/:id/edit",
+        name: "admin-category-edit",
         component: () =>
             import(
                 "../../modules/PkgBlog/Resources/js/pages/admin/category/edit.vue"
@@ -95,7 +99,8 @@ const routes = [
         meta: { requiresAuth: true, permission: "edit category" },
     },
     {
-        path: "/categories/create",
+        path: "/admin/categories/create",
+        name: "admin-category-create",
         component: () =>
             import(
                 "../../modules/PkgBlog/Resources/js/pages/admin/category/create.vue"
@@ -103,7 +108,8 @@ const routes = [
         meta: { requiresAuth: true, permission: "create category" },
     },
     {
-        path: "/tags",
+        path: "/admin/tags",
+        name: "admin-tags",
         component: () =>
             import(
                 "../../modules/PkgBlog/Resources/js/pages/admin/tag/index.vue"
@@ -111,7 +117,8 @@ const routes = [
         meta: { requiresAuth: true, permission: "view tag" },
     },
     {
-        path: "/tags/create",
+        path: "/admin/tags/create",
+        name: "admin-tag-create",
         component: () =>
             import(
                 "../../modules/PkgBlog/Resources/js/pages/admin/tag/create.vue"
@@ -119,7 +126,8 @@ const routes = [
         meta: { requiresAuth: true, permission: "create tag" },
     },
     {
-        path: "/tags/:id/edit",
+        path: "/admin/tags/:id/edit",
+        name: "admin-tag-edit",
         component: () =>
             import(
                 "../../modules/PkgBlog/Resources/js/pages/admin/tag/edit.vue"
@@ -128,6 +136,7 @@ const routes = [
     },
     {
         path: "/unauthorized",
+        name: "unauthorized",
         component: () =>
             import("../../modules/PkgBlog/Resources/js/pages/Unauthorized.vue"),
     },
@@ -142,34 +151,29 @@ router.beforeEach((to, from, next) => {
     const authStore = useAuthStore();
 
     if (authStore.loading) {
-        // Use watchEffect to delay navigation until loading is done
         const stopWatching = watchEffect(() => {
             if (!authStore.loading) {
-                stopWatching(); // Stop watching once loading is complete
-                router.push(to.fullPath); // Retry navigation
+                stopWatching();
+                router.push(to.fullPath);
             }
         });
 
-        return next(false); // Cancel current navigation attempt
+        return next(false);
     }
 
-    // Public route (does not require authentication)
     if (to.meta.requiresAuth === false) {
         return next();
     }
 
-    // If authentication is required but user is not logged in, redirect to login
     if (to.meta.requiresAuth && !authStore.user) {
         window.location.href = "/login";
         return;
     }
 
-    // Check role-based access control
     if (to.meta.role && !authStore.hasRole(to.meta.role)) {
         return next("/unauthorized");
     }
 
-    // Check permission-based access control
     if (to.meta.permission && !authStore.hasPermission(to.meta.permission)) {
         return next("/unauthorized");
     }

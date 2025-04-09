@@ -4,7 +4,7 @@
             <!-- Header: Title + Create Button -->
             <div class="flex justify-between items-center">
                 <h2 class="text-2xl font-semibold text-gray-800">Categories</h2>
-                <router-link to="/categories/create"
+                <router-link :to="{name: 'admin-category-create'}"
                     class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition">
                     + Create Category
                 </router-link>
@@ -39,7 +39,7 @@
                             <td class="py-2 px-4">{{ index + 1 }}</td>
                             <td class="py-2 px-4">{{ category.name }}</td>
                             <td class="py-2 px-4 space-x-2">
-                                <router-link :to="`/categories/${category.id}/edit`"
+                                <router-link :to="{name: 'admin-category-edit', params: {id: category.id}}"
                                     class="text-yellow-500 hover:underline">
                                     Edit
                                 </router-link>
