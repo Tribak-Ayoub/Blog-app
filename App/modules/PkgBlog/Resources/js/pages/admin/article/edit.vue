@@ -540,7 +540,7 @@ const updateArticle = async () => {
             : "Article saved as draft successfully!";
 
         // Redirect after 1.5 seconds
-        setTimeout(() => router.push("/articles"), 1500);
+        setTimeout(() => router.push("/admin/articles"), 1500);
     } catch (error) {
         console.error("Update error:", error);
         if (error.response && error.response.data.errors) {
