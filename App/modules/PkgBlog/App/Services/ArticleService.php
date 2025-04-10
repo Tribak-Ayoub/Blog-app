@@ -45,10 +45,16 @@ class ArticleService
 
     public function getArticleById($id)
     {
-        $article = Article::with(['user', 'images', 'category', 'tags', 'comments'])->findOrFail($id);
+        $article = Article::with(['user', 'images', 'category', 'tags', 'comments.user'])->findOrFail($id);
 
         if ($article) {
             $article->user->profile_image = $article->user->profile_image;
+        }
+
+        foreach ($article->comments as $comment) {
+            if ($comment->user) {
+                $comment->user->profile_image = $comment->user->profile_image;
+            }
         }
 
         $article->increment('view_count');

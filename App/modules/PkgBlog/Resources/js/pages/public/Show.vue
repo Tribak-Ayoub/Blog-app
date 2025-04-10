@@ -148,8 +148,6 @@
                                         <p class="text-gray-600 mb-3">{{ article.user.role }}</p>
                                         <p class="text-gray-700">{{ article.user.bio }}</p>
                                         <div class="mt-4 flex space-x-3">
-                                            <a :href="`/user/${article.user.id}`"
-                                                class="text-blue-600 hover:text-blue-800 font-medium">Follow</a>
                                             <a :href="`/user/${article.user.id}/articles`"
                                                 class="text-blue-600 hover:text-blue-800 font-medium">View all
                                                 articles</a>
@@ -166,7 +164,7 @@
                                 <!-- Comment Form -->
                                 <div class="mb-8">
                                     <div class="flex items-start space-x-4">
-                                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Your avatar"
+                                        <img v-if="authStore.user" :src="authStore.user.profile_image" :alt="authStore.user.name"
                                             class="w-10 h-10 rounded-full object-cover" />
                                         <div class="flex-1">
                                             <textarea v-model="commentText" placeholder="Add a comment..."
@@ -185,24 +183,31 @@
 
                                 <!-- Comments List -->
                                 <div v-if="article.comments.length > 0" class="space-y-6">
-                                    <div v-for="(comment, index) in article.comments" :key="index"
+                                    <div v-for="(comment, index) in visibleComments" :key="index"
                                         class="flex space-x-4">
-                                        <img :src="comment.avatar" :alt="comment.name"
+                                        <img :src="comment.user.profile_image" :alt="comment.user.name"
                                             class="w-10 h-10 rounded-full object-cover" />
                                         <div class="flex-1">
                                             <div class="bg-gray-50 p-4 rounded-lg">
                                                 <div class="flex items-center justify-between mb-2">
-                                                    <h4 class="font-medium text-gray-900">{{ comment.name }}</h4>
-                                                    <span class="text-sm text-gray-500">{{ formatDate(comment.date)
-                                                        }}</span>
+                                                    <h4 class="font-medium text-gray-900">{{ comment.user.name }}</h4>
+                                                    <span class="text-sm text-gray-500">{{
+                                                        formatDate(comment.created_at) }}</span>
                                                 </div>
-                                                <p class="text-gray-700">{{ comment.text }}</p>
+                                                <p class="text-gray-700">{{ comment.content }}</p>
                                             </div>
                                             <div class="mt-2 ml-2 flex space-x-4 text-sm">
-                                                <button class="text-gray-500 hover:text-blue-600">Reply</button>
-                                                <button class="text-gray-500 hover:text-blue-600">Like</button>
+                                                <!-- <button class="text-gray-500 hover:text-blue-600">Reply</button>
+                                                <button class="text-gray-500 hover:text-blue-600">Like</button> -->
                                             </div>
                                         </div>
+                                    </div>
+
+                                    <div v-if="article.comments.length > visibleCount" class="text-center mt-4">
+                                        <button @click="showMoreComments"
+                                            class="px-4 py-2 text-sm font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors">
+                                            Show More Comments
+                                        </button>
                                     </div>
                                 </div>
 
@@ -249,8 +254,8 @@
                                 <div v-for="(relatedArticle, index) in relatedArticles" :key="index"
                                     class="flex space-x-4">
                                     <img v-if="relatedArticle.featured_image_url"
-                                        :src="relatedArticle.featured_image_url"
-                                        :alt="relatedArticle.title" class="w-20 h-20 object-cover rounded-lg" />
+                                        :src="relatedArticle.featured_image_url" :alt="relatedArticle.title"
+                                        class="w-20 h-20 object-cover rounded-lg" />
                                     <div>
                                         <h4 class="font-medium text-gray-900 line-clamp-2 mb-1">
                                             <a :href="`/articles/${relatedArticle.id}`" class="hover:text-blue-600">{{
@@ -282,12 +287,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import PublicNavbar from '../../components/PublicNavbar.vue';
 import PublicFooter from '../../components/PublicFooter.vue';
+import { useAuthStore } from "@/stores/auth";
 
+const authStore = useAuthStore();
 const route = useRoute();
 const articleId = route.params.id;
 
@@ -301,6 +308,7 @@ const emailInput = ref('');
 const commentText = ref('');
 const commentSubmitting = ref(false);
 const subscribeSubmitting = ref(false);
+const visibleCount = ref(2);
 
 // Fetch article data
 const fetchArticle = async () => {
@@ -311,6 +319,7 @@ const fetchArticle = async () => {
     try {
         const response = await axios.get(`/api/articles/${articleId}`);
         article.value = response.data.article;
+        console.log(article.value);
         relatedArticles.value = response.data.relatedArticles;
     } catch (err) {
         console.error('Error fetching article:', err);
@@ -319,6 +328,14 @@ const fetchArticle = async () => {
         loading.value = false;
         relatedLoading.value = false;
     }
+};
+
+const visibleComments = computed(() => {
+    return article.value.comments.slice(0, visibleCount.value);
+});
+
+const showMoreComments = () => {
+    visibleCount.value += 4;
 };
 
 // Format date to be more readable
