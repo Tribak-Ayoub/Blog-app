@@ -162,16 +162,20 @@
                                     article.comments.length }})</h3>
 
                                 <!-- Comment Form -->
-                                <div class="mb-8">
+                                <form v-if="authStore.user" @submit.prevent="addComment" class="mb-8">
                                     <div class="flex items-start space-x-4">
-                                        <img v-if="authStore.user" :src="authStore.user.profile_image" :alt="authStore.user.name"
+                                        <img :src="authStore.user.profile_image" :alt="authStore.user.name"
                                             class="w-10 h-10 rounded-full object-cover" />
                                         <div class="flex-1">
-                                            <textarea v-model="commentText" placeholder="Add a comment..."
+                                            <textarea v-model="form.content" placeholder="Add a comment..."
                                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                rows="3"></textarea>
+                                                rows="3" required :maxlength="1000"></textarea>
+                                            <div v-if="form.content.length > 900" class="text-sm text-gray-500">
+                                                {{ 1000 - form.content.length }} characters remaining
+                                            </div>
                                             <div class="mt-2 flex justify-end">
-                                                <button @click="addComment" :disabled="commentSubmitting"
+                                                <button type="submit"
+                                                    :disabled="commentSubmitting || form.content.trim() === ''"
                                                     class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
                                                     <span v-if="commentSubmitting">Posting...</span>
                                                     <span v-else>Post Comment</span>
@@ -179,6 +183,10 @@
                                             </div>
                                         </div>
                                     </div>
+                                </form>
+                                <div v-else class="mb-8 text-gray-600">
+                                    <p>Please <a href="/login" class="text-blue-600 underline">log in</a> to comment.
+                                    </p>
                                 </div>
 
                                 <!-- Comments List -->
@@ -310,6 +318,10 @@ const commentSubmitting = ref(false);
 const subscribeSubmitting = ref(false);
 const visibleCount = ref(2);
 
+const form = ref({
+    content: '',
+});
+
 // Fetch article data
 const fetchArticle = async () => {
     loading.value = true;
@@ -319,7 +331,6 @@ const fetchArticle = async () => {
     try {
         const response = await axios.get(`/api/articles/${articleId}`);
         article.value = response.data.article;
-        console.log(article.value);
         relatedArticles.value = response.data.relatedArticles;
     } catch (err) {
         console.error('Error fetching article:', err);
@@ -362,22 +373,39 @@ const subscribeToNewsletter = async () => {
     }
 };
 
-// Add comment
+
 const addComment = async () => {
-    if (commentSubmitting.value || commentText.value.trim() === '') return;
+    if (commentSubmitting.value || form.value.content.trim() === '') {
+        return;
+    }
 
     commentSubmitting.value = true;
+
     try {
-        const response = await axios.post(`/api/articles/${articleId}/comments`, {
-            text: commentText.value
+        const response = await axios.post(`/api/comments/store`, {
+            content: form.value.content,
+            article_id: article.value.id,
+            user_id: authStore.user.id,
         });
 
-        // Add the new comment to the list
-        article.value.comments.unshift(response.data);
-        commentText.value = '';
+        // Add the new comment to the beginning of the array
+        article.value.comments.unshift({
+            id: response.data.id,
+            content: form.value.content,
+            created_at: new Date().toISOString(),
+            user: {
+                id: authStore.user.id,
+                name: authStore.user.name,
+                profile_image: authStore.user.profile_image
+            }
+        });
+
+        // Clear the form
+        form.value.content = '';
+
     } catch (err) {
         console.error('Error posting comment:', err);
-        alert(err.response?.data?.message || 'Failed to post comment. Please try again later.');
+        alert(err.response?.data?.message || 'Failed to post comment');
     } finally {
         commentSubmitting.value = false;
     }
