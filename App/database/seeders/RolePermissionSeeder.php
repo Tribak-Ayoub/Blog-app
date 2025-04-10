@@ -19,6 +19,7 @@ class RolePermissionSeeder extends Seeder
             'article' => ['create', 'edit', 'delete', 'view'],
             'tag' => ['create', 'edit', 'delete', 'view'],
             'category' => ['create', 'edit', 'delete', 'view'],
+            'comment' => ['create', 'edit', 'delete', 'view'],
             'user' => ['manage'],
             'settings' => ['edit'],
         ];
@@ -34,8 +35,19 @@ class RolePermissionSeeder extends Seeder
         $userRole = Role::create(['name' => 'user']);
 
         $adminRole->givePermissionTo(Permission::all());
-        $editorRole->givePermissionTo(['create article', 'edit article', 'view article']);
-        $userRole->givePermissionTo(['view article']);
+        $editorRole->givePermissionTo([
+            'create article',
+            'edit article',
+            'view article',
+            'delete article',
+            'create comment',
+            'edit comment',
+            'view comment',
+            'delete comment',
+            'view category',
+            'view tag'
+        ]);
+        $userRole->givePermissionTo(['view article', 'view comment']);
 
         // Create a user and assign the admin role
         $user = User::create([
