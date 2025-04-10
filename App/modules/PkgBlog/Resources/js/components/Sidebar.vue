@@ -48,7 +48,7 @@
                     </router-link>
                 </li>
                 <li v-if="authStore.permissions.includes('view comment')">
-                    <router-link to="/comments" class="flex items-center p-2 hover:bg-gray-700 rounded">
+                    <router-link :to="{ name: 'admin-comments' }" class="flex items-center p-2 hover:bg-gray-700 rounded">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 7h6M9 11h6M9 15h6" />

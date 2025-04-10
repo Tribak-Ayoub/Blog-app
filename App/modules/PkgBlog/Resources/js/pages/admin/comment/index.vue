@@ -1,18 +1,16 @@
 <template>
     <Layout>
         <div class="p-6 space-y-6">
-            <!-- Header: Title + Create Button -->
+            <!-- Header -->
             <div class="flex justify-between items-center">
                 <h2 class="text-2xl font-semibold text-gray-800">Comments</h2>
             </div>
 
-            <!-- Search and Filter Section -->
+            <!-- Filters -->
             <div class="flex flex-wrap items-center gap-4 bg-white p-4 rounded-lg shadow">
-                <!-- Search Input -->
-                <input v-model="searchQuery" type="text" placeholder="Search by content..."
+                <input v-model="searchQuery" type="text" placeholder="Search by comment content..."
                     class="border border-gray-300 p-2 rounded-lg w-full md:w-1/3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
 
-                <!-- Filter by Article -->
                 <select v-model="selectedArticle"
                     class="border border-gray-300 p-2 rounded-lg w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">All Articles</option>
@@ -21,7 +19,6 @@
                     </option>
                 </select>
 
-                <!-- Reset Filters -->
                 <button @click="searchQuery = ''; selectedArticle = ''"
                     class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition">
                     Reset
@@ -47,11 +44,11 @@
                             <td class="py-2 px-4">{{ index + 1 }}</td>
                             <td class="py-2 px-4">{{ comment.article.title }}</td>
                             <td class="py-2 px-4">{{ comment.user.name }}</td>
-                            <td class="py-2 px-4">{{ comment.content }}</td>
+                            <td class="py-2 px-4 max-w-xs truncate">{{ comment.content }}</td>
                             <td class="py-2 px-4">{{ formatDate(comment.created_at) }}</td>
                             <td class="py-2 px-4 space-x-2">
                                 <router-link v-if="authStore.hasPermission('view comment')"
-                                    :to="{ name: 'admin-comment-detail', params: { id: comment.id } }"
+                                    to=""
                                     class="text-blue-500 hover:underline">
                                     View
                                 </router-link>
@@ -89,31 +86,41 @@ const selectedArticle = ref("");
 const fetchComments = async () => {
     try {
         const response = await axios.get("/api/comments");
-        articles.value = response.data.articles.data;
-        comments.value = response.data.comments;
+        const data = response.data.data;
+
+        comments.value = data;
+
+        const uniqueArticles = new Map();
+        data.forEach(comment => {
+            if (comment.article && !uniqueArticles.has(comment.article.id)) {
+                uniqueArticles.set(comment.article.id, comment.article);
+            }
+        });
+        articles.value = [...uniqueArticles.values()];
     } catch (error) {
-        console.error("Error fetching articles:", error);
+        console.error("Error fetching comments:", error);
     }
 };
 
-// Format the date
 const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
 };
 
-// Computed property for filtering comments
 const filteredComments = computed(() => {
-    if (authStore.hasRole('admin')) {
-        return comments.value.filter(comment => {
-            const matchesSearch = comment.article.title.toLowerCase().includes(searchQuery.value.toLowerCase());
-            const matchesArticle = selectedArticle.value ? comment.article.title == selectedArticle.value : true;
-            return matchesSearch && matchesArticle;
-        });
-    }
     return comments.value.filter(comment => {
-        const matchesSearch = comment.article.title.toLowerCase().includes(searchQuery.value.toLowerCase());
-        const matchesArticle = selectedArticle.value ? comment.article.title == selectedArticle.value : true;
-        const isOwner = comment.article.user_id === authStore.user.id;
+        const matchesSearch = comment.content
+            .toLowerCase()
+            .includes(searchQuery.value.toLowerCase());
+
+        const matchesArticle = selectedArticle.value
+            ? comment.article.id === selectedArticle.value
+            : true;
+
+        if (authStore.hasRole('admin')) {
+            return matchesSearch && matchesArticle;
+        }
+
+        const isOwner = comment.user_id === authStore.user.id;
         return matchesSearch && matchesArticle && isOwner;
     });
 });
@@ -121,9 +128,7 @@ const filteredComments = computed(() => {
 const deleteComment = async (commentId) => {
     if (confirm("Are you sure you want to delete this comment?")) {
         try {
-            const response = await axios.delete(`/api/comments/${commentId}`);
-
-            // Remove the comment from the list
+            await axios.delete(`/api/comments/${commentId}`);
             comments.value = comments.value.filter(comment => comment.id !== commentId);
         } catch (error) {
             console.error("Error deleting comment:", error);
