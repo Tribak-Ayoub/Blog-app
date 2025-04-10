@@ -69,7 +69,7 @@ const submitTag= async () => {
         successMessage.value = "Tag created successfully!";
 
         // Redirect after 1 second
-        setTimeout(() => router.push("/tags"), 1000);
+        setTimeout(() => router.push("/admin/tags"), 1000);
     } catch (error) {
         if (error.response && error.response.data.errors) {
             errors.value = error.response.data.errors;

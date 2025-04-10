@@ -60,7 +60,7 @@ const submitForm = async () => {
                 name: selectedCategoryName.value,
             };
             await axios.put(`/api/categories/${selectedCategoryId.value}`, updatedCategory); // Send updated category data
-            router.push('/categories'); // Redirect after update
+            router.push('/admin/categories'); // Redirect after update
         }
     } catch (error) {
         console.error('Error updating category:', error);
@@ -68,6 +68,6 @@ const submitForm = async () => {
 };
 
 const cancel = () => {
-    router.push('/categories'); // Redirect to the categories page
+    router.push('/admin/categories'); // Redirect to the categories page
 };
 </script>
