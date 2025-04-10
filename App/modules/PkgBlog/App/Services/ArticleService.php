@@ -11,7 +11,7 @@ class ArticleService
 {
     public function paginate($filters = [], $perPage = 10)
     {
-        $query = Article::latest();
+        $query = Article::latest()->with(['user', 'category', 'tags']);
 
         // Apply category filter
         if (!empty($filters['category'])) {
@@ -33,7 +33,14 @@ class ArticleService
             });
         }
 
-        return $query->paginate($perPage);
+        $paginated = $query->paginate($perPage);
+
+        $paginated->getCollection()->transform(function ($article) {
+            $article->user->profile_image = $article->user->profile_image;
+            return $article;
+        });
+
+        return $paginated;
     }
 
     public function getArticleById($id)
@@ -91,17 +98,17 @@ class ArticleService
                 Storage::disk('public')->delete($article->featured_image);
             }
             $featuredImagePath = null;
-        } 
+        }
         // Handle new featured image upload
         elseif (isset($data['featured_image']) && $data['featured_image'] instanceof \Illuminate\Http\UploadedFile) {
             // Delete old image if exists
             if ($article->featured_image) {
                 Storage::disk('public')->delete($article->featured_image);
             }
-            
+
             // Store new image
             $featuredImagePath = $data['featured_image']->store('articles/featured', 'public');
-        } 
+        }
         // If no new image and not removing, keep the existing one
         else {
             $featuredImagePath = $article->featured_image;
@@ -136,13 +143,13 @@ class ArticleService
         if ($article->featured_image) {
             Storage::disk('public')->delete($article->featured_image);
         }
-        
+
         // Delete gallery images
         foreach ($article->images as $image) {
             Storage::disk('public')->delete($image->image_path);
             $image->delete();
         }
-        
+
         $article->delete();
         return true;
     }

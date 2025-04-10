@@ -32,7 +32,7 @@ class ArticleController extends BaseController
         ];
 
         $articles = $this->articleService->paginate($filters);
-        $articles->load('category', 'user');
+        // $articles->load('category', 'user');
         $categories = Category::all();
         $tags = Tag::all();
 

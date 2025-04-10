@@ -8,6 +8,9 @@ export const useAuthStore = defineStore("auth", {
         permissions: [],
         loading: true,
     }),
+    getters: {
+        isLoggedIn: (state) => !!state.user,
+    },
     actions: {
         async fetchUser() {
             try {

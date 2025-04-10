@@ -312,7 +312,6 @@ const fetchArticle = async () => {
         const response = await axios.get(`/api/articles/${articleId}`);
         article.value = response.data.article;
         relatedArticles.value = response.data.relatedArticles;
-        console.log(relatedArticles.value);
     } catch (err) {
         console.error('Error fetching article:', err);
         error.value = err.response?.data?.message || 'Failed to load article. Please try again later.';

@@ -35,7 +35,7 @@ defineProps({
                         creators.
                     </p>
                     <div class="flex flex-wrap gap-4">
-                        <button
+                        <router-link :to="{ name: 'articles' }"
                             class="flex items-center bg-gradient-to-r from-blue-500 to-purple-500 text-white px-7 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition duration-300">
                             <span>Explore Articles</span>
                             <svg xmlns="http://www.w3.org/2000/svg"
@@ -45,7 +45,7 @@ defineProps({
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                                 <polyline points="12 5 19 12 12 19"></polyline>
                             </svg>
-                        </button>
+                        </router-link>
                         <button
                             class="px-7 py-3 rounded-full font-semibold border-2 border-white/50 text-white hover:bg-white/10 hover:border-white transition duration-300">
                             Subscribe
@@ -59,8 +59,9 @@ defineProps({
                             <div class="p-6 flex-1">
                                 <span
                                     class="inline-block px-3 py-1 bg-gray-100 text-xs font-semibold text-gray-600 rounded-full mb-3">Latest</span>
-                                <h3 class="text-lg font-bold text-gray-900 mb-4 line-clamp-2">{{ featuredArticle.title
-                                }}</h3>
+                                <router-link :to="{ name: 'article-detail', params: { id: featuredArticle.id } }"
+                                    class="text-lg font-bold text-gray-900 mb-4 line-clamp-2">{{ featuredArticle.title
+                                    }}</router-link>
                                 <div class="flex items-center justify-between text-xs text-gray-500">
                                     <div class="flex items-center space-x-2">
                                         <img :src="featuredArticle.user?.profile_image"
@@ -72,8 +73,7 @@ defineProps({
                                 </div>
                             </div>
                             <div class="sm:w-44 h-32 sm:h-auto">
-                                <img v-if="featuredArticle.featured_image_url"
-                                    :src="featuredArticle.featured_image_url"
+                                <img v-if="featuredArticle.featured_image_url" :src="featuredArticle.featured_image_url"
                                     :alt="featuredArticle.title" class="w-full h-full object-cover" />
                             </div>
                         </div>

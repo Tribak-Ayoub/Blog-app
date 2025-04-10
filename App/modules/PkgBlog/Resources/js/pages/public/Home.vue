@@ -15,9 +15,8 @@
                 <div v-if="featuredArticle?.id"
                     class="bg-white rounded-xl overflow-hidden shadow-lg flex flex-col md:flex-row">
                     <div class="md:w-1/2 relative">
-                        <img v-if="featuredArticle.featured_image_url"
-                            :src="featuredArticle.featured_image_url" :alt="featuredArticle.title"
-                            class="w-full h-full object-cover" />
+                        <img v-if="featuredArticle.featured_image_url" :src="featuredArticle.featured_image_url"
+                            :alt="featuredArticle.title" class="w-full h-full object-cover" />
                         <span
                             class="absolute top-4 left-4 bg-gray-800 text-white px-4 py-1 rounded-full text-sm font-semibold">
                             Featured
@@ -40,7 +39,7 @@
                                 <span>{{ formatDate(featuredArticle.created_at) }}</span>
                             </div>
                         </div>
-                        <router-link :to="`/public/articles/${featuredArticle.id}`"
+                        <router-link :to="{ name: 'article-detail', params: { id: featuredArticle.id } }"
                             class="bg-gray-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-900 transition duration-200 self-start">
                             Read Article
                         </router-link>
@@ -73,7 +72,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center mb-12">
                     <h2 class="text-3xl font-bold">Recent Articles</h2>
-                    <button class="text-gray-800 font-semibold hover:underline">View All</button>
+                    <router-link :to="{name: 'articles'}" class="text-gray-800 font-semibold hover:underline">View All</router-link>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -99,7 +98,7 @@
                                 <time :datetime="article.created_at" class="text-xs text-gray-500">{{
                                     formatDate(article.created_at) }}</time>
                             </div>
-                            <router-link :to="`/public/articles/${article.id}`"
+                            <router-link :to="{ name: 'article-detail', params: { id: article.id } }"
                                 class="w-full bg-gray-800 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-900 transition duration-200">
                                 Read More
                             </router-link>
@@ -116,7 +115,7 @@
         <PopularTags :popularTags="popularTags" />
 
         <!-- Footer -->
-        <PublicFooter :categories="categories"/>
+        <PublicFooter :categories="categories" />
     </div>
 
     <div v-else class="text-center">Loading...</div>
@@ -156,7 +155,6 @@ const fetchHomeData = async () => {
         categories.value = data.categories || [];
         popularTags.value = data.popularTags || [];
         recentArticles.value = data.recentArticles || [];
-        console.log(featuredArticle.value);
     } catch (error) {
         console.error("API Fetch Error:", error);
     } finally {

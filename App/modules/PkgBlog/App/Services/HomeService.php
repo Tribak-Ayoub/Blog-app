@@ -10,7 +10,7 @@ class HomeService
 {
     public function getHomePageData(): array
     {
-        $recentArticles = Article::with('user', 'images', 'category')
+        $recentArticles = Article::with('user', 'category')
             ->latest()
             ->take(6)
             ->get()
@@ -21,7 +21,7 @@ class HomeService
             });
 
         // Get the featured article (no need for map here)
-        $featuredArticle = Article::with('user', 'images', 'category')
+        $featuredArticle = Article::with('user', 'category')
             ->orderByDesc('view_count')
             ->limit(1)
             ->first();
