@@ -8,6 +8,9 @@ defineProps({
     readersCount: Number,
     categoriesCount: Number,
 });
+
+const emit = defineEmits(['scrollToNewsletter']);
+
 </script>
 
 <template>
@@ -46,7 +49,7 @@ defineProps({
                                 <polyline points="12 5 19 12 12 19"></polyline>
                             </svg>
                         </router-link>
-                        <button
+                        <button @click="emit('scrollToNewsletter')"
                             class="px-7 py-3 rounded-full font-semibold border-2 border-white/50 text-white hover:bg-white/10 hover:border-white transition duration-300">
                             Subscribe
                         </button>

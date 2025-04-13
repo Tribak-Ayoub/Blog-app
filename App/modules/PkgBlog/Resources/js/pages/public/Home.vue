@@ -6,7 +6,7 @@
         <!-- Hero Section -->
         <HeroSection :featuredArticle="featuredArticle" :categories="categories" :popularTags="popularTags"
             :formatDate="formatDate" @subscribeToNewsletter="subscribeToNewsletter" :articlesCount="articlesCount"
-            :readersCount="readersCount" :categoriesCount="categoriesCount" />
+            :readersCount="readersCount" :categoriesCount="categoriesCount" @scrollToNewsletter="scrollToNewsletter"/>
 
         <!-- Featured Article -->
         <section class="bg-gray-50 pt-24 pb-16">
@@ -109,7 +109,7 @@
         </section>
 
         <!-- Newsletter -->
-        <Newsletter v-model="emailInput" @subscribeToNewsletter="subscribeToNewsletter" />
+        <Newsletter  ref="newsletterSection" v-model="emailInput" @subscribeToNewsletter="subscribeToNewsletter" />
 
         <!-- Popular Tags -->
         <PopularTags :popularTags="popularTags" />
@@ -142,6 +142,11 @@ const featuredArticle = ref(null);
 const categories = ref([]);
 const popularTags = ref([]);
 const recentArticles = ref([]);
+const newsletterSection = ref(null)
+
+const scrollToNewsletter = () => {
+  newsletterSection.value?.$el?.scrollIntoView({ behavior: 'smooth' })
+}
 
 const fetchHomeData = async () => {
     try {
