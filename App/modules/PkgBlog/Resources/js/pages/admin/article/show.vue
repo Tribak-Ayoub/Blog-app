@@ -266,7 +266,7 @@ onMounted(() => {
             <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden mb-6">
                 <div class="p-5 border-b border-gray-100 flex justify-between items-center">
                     <h3 class="font-semibold text-gray-800">Comments ({{ comments.length }})</h3>
-                    <div class="flex items-center gap-2">
+                    <!-- <div class="flex items-center gap-2">
                         <button @click="toggleCommentModeration"
                             class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="none"
@@ -276,12 +276,11 @@ onMounted(() => {
                             </svg>
                             {{ moderationMode ? 'Exit Moderation' : 'Moderate Comments' }}
                         </button>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="p-5">
-                    <CommentsList :comments="comments" :moderation-mode="moderationMode" @approve="approveComment"
-                        @reject="rejectComment" @delete="deleteComment" />
+                    <CommentsList :comments="comments" />
                 </div>
             </div>
 
@@ -433,8 +432,7 @@ const fetchArticleData = async (id) => {
         const response = await axios.get(`/api/articles/${id}`);
         article.value = response.data.article;
         relatedArticles.value = response.data.relatedArticles || [];
-        comments.value = response.data.comments || [];
-
+        comments.value = response.data.article.comments || [];
     } catch (error) {
         console.error('Error fetching article data:', error);
         showToast('error', 'Error', 'Failed to load article data');
@@ -547,53 +545,53 @@ const toggleCommentModeration = () => {
     moderationMode.value = !moderationMode.value;
 };
 
-const approveComment = async (commentId) => {
-    try {
-        await axios.patch(`/api/comments/${commentId}/approve`);
+// const approveComment = async (commentId) => {
+//     try {
+//         await axios.patch(`/api/comments/${commentId}/approve`);
 
-        // Update local state
-        const commentIndex = comments.value.findIndex(c => c.id === commentId);
-        if (commentIndex !== -1) {
-            comments.value[commentIndex].status = 'approved';
-        }
+//         // Update local state
+//         const commentIndex = comments.value.findIndex(c => c.id === commentId);
+//         if (commentIndex !== -1) {
+//             comments.value[commentIndex].status = 'approved';
+//         }
 
-        showToast('success', 'Comment Approved', 'The comment is now visible to all users');
-    } catch (error) {
-        console.error('Error approving comment:', error);
-        showToast('error', 'Error', 'Failed to approve comment');
-    }
-};
+//         showToast('success', 'Comment Approved', 'The comment is now visible to all users');
+//     } catch (error) {
+//         console.error('Error approving comment:', error);
+//         showToast('error', 'Error', 'Failed to approve comment');
+//     }
+// };
 
-const rejectComment = async (commentId) => {
-    try {
-        await axios.patch(`/api/comments/${commentId}/reject`);
+// const rejectComment = async (commentId) => {
+//     try {
+//         await axios.patch(`/api/comments/${commentId}/reject`);
 
-        // Update local state
-        const commentIndex = comments.value.findIndex(c => c.id === commentId);
-        if (commentIndex !== -1) {
-            comments.value[commentIndex].status = 'rejected';
-        }
+//         // Update local state
+//         const commentIndex = comments.value.findIndex(c => c.id === commentId);
+//         if (commentIndex !== -1) {
+//             comments.value[commentIndex].status = 'rejected';
+//         }
 
-        showToast('success', 'Comment Rejected', 'The comment has been rejected');
-    } catch (error) {
-        console.error('Error rejecting comment:', error);
-        showToast('error', 'Error', 'Failed to reject comment');
-    }
-};
+//         showToast('success', 'Comment Rejected', 'The comment has been rejected');
+//     } catch (error) {
+//         console.error('Error rejecting comment:', error);
+//         showToast('error', 'Error', 'Failed to reject comment');
+//     }
+// };
 
-const deleteComment = async (commentId) => {
-    try {
-        await axios.delete(`/api/comments/${commentId}`);
+// const deleteComment = async (commentId) => {
+//     try {
+//         await axios.delete(`/api/comments/${commentId}`);
 
-        // Update local state
-        comments.value = comments.value.filter(c => c.id !== commentId);
+//         // Update local state
+//         comments.value = comments.value.filter(c => c.id !== commentId);
 
-        showToast('success', 'Comment Deleted', 'The comment has been permanently deleted');
-    } catch (error) {
-        console.error('Error deleting comment:', error);
-        showToast('error', 'Error', 'Failed to delete comment');
-    }
-};
+//         showToast('success', 'Comment Deleted', 'The comment has been permanently deleted');
+//     } catch (error) {
+//         console.error('Error deleting comment:', error);
+//         showToast('error', 'Error', 'Failed to delete comment');
+//     }
+// };
 
 // Toast Helper
 const showToast = (type, title, message) => {

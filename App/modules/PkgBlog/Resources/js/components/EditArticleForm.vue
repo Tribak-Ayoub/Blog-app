@@ -104,7 +104,7 @@ onMounted(() => {
 });
 
 const cancel = () => {
-    router.push('/articles'); // Redirect to the articles page
+    router.push('/admin/articles'); // Redirect to the articles page
 };
 </script>
 

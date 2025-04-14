@@ -75,7 +75,7 @@ const submitCategory = async () => {
         successMessage.value = "Category created successfully!";
 
         // Redirect after 1 second
-        setTimeout(() => router.push("/categories"), 1000);
+        setTimeout(() => router.push("/admin/categories"), 1000);
     } catch (error) {
         if (error.response && error.response.data.errors) {
             errors.value = error.response.data.errors;

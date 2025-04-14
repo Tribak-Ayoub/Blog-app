@@ -11,7 +11,7 @@ class Comment extends Model
     /** @use HasFactory<\Database\Factories\CommentFactory> */
     use HasFactory;
 
-    protected $fillable = ['content', 'user_id', 'article_id'];
+    protected $fillable = ['content', 'user_id', 'article_id', 'parent_id'];
 
     public function user()
     {

@@ -140,6 +140,15 @@ const routes = [
         component: () =>
             import("../../modules/PkgBlog/Resources/js/pages/Unauthorized.vue"),
     },
+    {
+        path: "/admin/comments",
+        name: "admin-comments",
+        component: () =>
+            import(
+                "../../modules/PkgBlog/Resources/js/pages/admin/comment/index.vue"
+            ),
+        meta: { requiresAuth: true, permission: "view comment" },
+    },
 ];
 
 const router = createRouter({

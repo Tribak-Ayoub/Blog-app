@@ -6,6 +6,7 @@ use Modules\PkgBlog\App\Controllers\ArticleController;
 use Modules\PkgBlog\App\Controllers\ArticleImageController;
 use Modules\PkgBlog\App\Controllers\CategoryController;
 use Modules\PkgBlog\App\Controllers\ChartDataController;
+use Modules\PkgBlog\App\Controllers\CommentController;
 use Modules\PkgBlog\App\Controllers\HomeController;
 use Modules\PkgBlog\App\Controllers\TagController;
 
@@ -39,6 +40,15 @@ Route::prefix('api/tags')->middleware(['auth', 'web'])->group(function () {
     Route::delete('/{tag}', [TagController::class, 'destroy'])->name('tags.destroy');
     Route::get('/{tag}/edit', [TagController::class, 'edit'])->name('tags.edit');
     Route::put('/{tag}', [TagController::class, 'update'])->name('tags.update');
+});
+
+Route::prefix('api/comments')->middleware(['auth', 'web'])->group(function () {
+    Route::get('/', [CommentController::class, 'index'])->name('comments.index');
+    Route::get('/create', [CommentController::class, 'create'])->name('comments.create');
+    Route::post('/store', [CommentController::class, 'store'])->name('comments.store');
+    Route::delete('/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+    Route::get('/{comment}/edit', [CommentController::class, 'edit'])->name('comments.edit');
+    Route::put('/{comment}', [CommentController::class, 'update'])->name('comments.update');
 });
 
 Route::prefix('/chart-data')->middleware(['auth', 'web'])->group(function () {

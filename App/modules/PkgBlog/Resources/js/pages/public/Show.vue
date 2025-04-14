@@ -148,8 +148,6 @@
                                         <p class="text-gray-600 mb-3">{{ article.user.role }}</p>
                                         <p class="text-gray-700">{{ article.user.bio }}</p>
                                         <div class="mt-4 flex space-x-3">
-                                            <a :href="`/user/${article.user.id}`"
-                                                class="text-blue-600 hover:text-blue-800 font-medium">Follow</a>
                                             <a :href="`/user/${article.user.id}/articles`"
                                                 class="text-blue-600 hover:text-blue-800 font-medium">View all
                                                 articles</a>
@@ -160,53 +158,142 @@
 
                             <!-- Comments -->
                             <div class="mt-10 pt-8 border-t border-gray-200">
-                                <h3 class="text-xl font-semibold text-gray-900 mb-6">Comments ({{
-                                    article.comments.length }})</h3>
+                                <h3 id="comments-heading" class="text-xl font-semibold text-gray-900 mb-6">
+                                    Comments ({{ article.comments.length }})
+                                </h3>
 
                                 <!-- Comment Form -->
                                 <div class="mb-8">
-                                    <div class="flex items-start space-x-4">
-                                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Your avatar"
-                                            class="w-10 h-10 rounded-full object-cover" />
-                                        <div class="flex-1">
-                                            <textarea v-model="commentText" placeholder="Add a comment..."
-                                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                rows="3"></textarea>
-                                            <div class="mt-2 flex justify-end">
-                                                <button @click="addComment" :disabled="commentSubmitting"
-                                                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-                                                    <span v-if="commentSubmitting">Posting...</span>
-                                                    <span v-else>Post Comment</span>
-                                                </button>
+                                    <template v-if="authStore.user">
+                                        <form @submit.prevent="addComment(null)" aria-labelledby="comment-form-heading">
+                                            <h4 id="comment-form-heading" class="sr-only">Add a comment</h4>
+                                            <div class="flex items-start gap-4">
+                                                <img :src="authStore.user.profile_image" :alt="authStore.user.name"
+                                                    class="w-10 h-10 rounded-full object-cover flex-shrink-0" />
+                                                <div class="flex-1 space-y-2">
+                                                    <label for="comment-textarea" class="sr-only">Your comment</label>
+                                                    <textarea id="comment-textarea" v-model="form.content"
+                                                        placeholder="Add a comment..."
+                                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                        rows="3" required aria-describedby="char-counter"
+                                                        :maxlength="1000"></textarea>
+
+                                                    <div v-if="form.content.length > 900" id="char-counter"
+                                                        class="text-sm text-gray-500">
+                                                        {{ 1000 - form.content.length }} characters remaining
+                                                    </div>
+
+                                                    <div class="flex justify-end">
+                                                        <button type="submit"
+                                                            :disabled="commentSubmitting || form.content.trim() === ''"
+                                                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                                                            <span v-if="commentSubmitting">Posting...</span>
+                                                            <span v-else>Post Comment</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
+                                        </form>
+                                    </template>
+                                    <template v-else>
+                                        <p class="text-gray-600">
+                                            Please <a href="/login"
+                                                class="text-blue-600 hover:text-blue-800 underline">log in</a> to
+                                            comment.
+                                        </p>
+                                    </template>
                                 </div>
 
                                 <!-- Comments List -->
                                 <div v-if="article.comments.length > 0" class="space-y-6">
-                                    <div v-for="(comment, index) in article.comments" :key="index"
-                                        class="flex space-x-4">
-                                        <img :src="comment.avatar" :alt="comment.name"
-                                            class="w-10 h-10 rounded-full object-cover" />
+                                    <div v-for="(comment) in visibleComments" :key="comment.id"
+                                        class="flex gap-4" :aria-labelledby="'comment-heading-' + comment.id">
+                                        <img :src="comment.user.profile_image" :alt="comment.user.name"
+                                            class="w-10 h-10 rounded-full object-cover flex-shrink-0" />
+
                                         <div class="flex-1">
                                             <div class="bg-gray-50 p-4 rounded-lg">
-                                                <div class="flex items-center justify-between mb-2">
-                                                    <h4 class="font-medium text-gray-900">{{ comment.name }}</h4>
-                                                    <span class="text-sm text-gray-500">{{ formatDate(comment.date)
-                                                        }}</span>
+                                                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                                    <h4 :id="'comment-heading-' + comment.id"
+                                                        class="font-medium text-gray-900">
+                                                        {{ comment.user.name }}
+                                                    </h4>
+                                                    <time :datetime="comment.created_at" class="text-sm text-gray-500">
+                                                        {{ formatDate(comment.created_at) }}
+                                                    </time>
                                                 </div>
-                                                <p class="text-gray-700">{{ comment.text }}</p>
+                                                <p class="text-gray-700 whitespace-pre-wrap">{{ comment.content }}</p>
                                             </div>
-                                            <div class="mt-2 ml-2 flex space-x-4 text-sm">
-                                                <button class="text-gray-500 hover:text-blue-600">Reply</button>
-                                                <button class="text-gray-500 hover:text-blue-600">Like</button>
+
+                                            <!-- Comment Actions -->
+                                            <div v-if="authStore.isLoggedIn" class="mt-2 ml-2 flex gap-4 text-sm">
+                                                <button
+                                                    @click="replyingTo = replyingTo === comment.id ? null : comment.id"
+                                                    class="text-gray-500 hover:text-blue-600"
+                                                    :aria-expanded="replyingTo === comment.id ? 'true' : 'false'"
+                                                    :aria-controls="'reply-form-' + comment.id">
+                                                    {{ replyingTo === comment.id ? 'Cancel Reply' : 'Reply' }}
+                                                </button>
+                                            </div>
+
+                                            <!-- Reply Form -->
+                                            <div v-if="replyingTo === comment.id" :id="'reply-form-' + comment.id"
+                                                class="mt-4 ml-14">
+                                                <form @submit.prevent="addComment(comment.id)" class="space-y-2">
+                                                    <label :for="'reply-textarea-' + comment.id" class="sr-only">Your
+                                                        reply</label>
+                                                    <textarea :id="'reply-textarea-' + comment.id"
+                                                        v-model="replyContent" placeholder="Write your reply..."
+                                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-blue-500"
+                                                        rows="2" required></textarea>
+                                                    <div class="flex justify-end gap-2">
+                                                        <button type="button" @click="replyingTo = null"
+                                                            class="px-3 py-1.5 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+                                                            Cancel
+                                                        </button>
+                                                        <button type="submit"
+                                                            class="px-3 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700">
+                                                            Post Reply
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+
+                                            <!-- Replies List -->
+                                            <div v-if="comment.replies.length" class="ml-14 mt-4 space-y-4">
+                                                <div v-for="reply in comment.replies" :key="reply.id" class="flex gap-3"
+                                                    :aria-labelledby="'reply-heading-' + reply.id">
+                                                    <img :src="reply.user.profile_image" :alt="reply.user.name"
+                                                        class="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+                                                    <div class="flex-1 bg-gray-100 p-3 rounded-lg">
+                                                        <div class="flex flex-wrap justify-between gap-2 mb-1">
+                                                            <h5 :id="'reply-heading-' + reply.id"
+                                                                class="font-medium text-gray-800">
+                                                                {{ reply.user.name }}
+                                                            </h5>
+                                                            <time :datetime="reply.created_at"
+                                                                class="text-sm text-gray-500">
+                                                                {{ formatDate(reply.created_at) }}
+                                                            </time>
+                                                        </div>
+                                                        <p class="text-gray-700 whitespace-pre-wrap">{{ reply.content }}
+                                                        </p>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+
+                                    <!-- Show More Comments Button -->
+                                    <div v-if="article.comments.length > visibleCount" class="text-center mt-6">
+                                        <button @click="showMoreComments"
+                                            class="px-4 py-2 text-sm font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors">
+                                            Show More Comments
+                                        </button>
+                                    </div>
                                 </div>
 
-                                <!-- No Comments -->
+                                <!-- Empty State -->
                                 <div v-else class="text-center py-8">
                                     <p class="text-gray-500">No comments yet. Be the first to share your thoughts!</p>
                                 </div>
@@ -249,8 +336,8 @@
                                 <div v-for="(relatedArticle, index) in relatedArticles" :key="index"
                                     class="flex space-x-4">
                                     <img v-if="relatedArticle.featured_image_url"
-                                        :src="relatedArticle.featured_image_url"
-                                        :alt="relatedArticle.title" class="w-20 h-20 object-cover rounded-lg" />
+                                        :src="relatedArticle.featured_image_url" :alt="relatedArticle.title"
+                                        class="w-20 h-20 object-cover rounded-lg" />
                                     <div>
                                         <h4 class="font-medium text-gray-900 line-clamp-2 mb-1">
                                             <a :href="`/articles/${relatedArticle.id}`" class="hover:text-blue-600">{{
@@ -282,12 +369,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import PublicNavbar from '../../components/PublicNavbar.vue';
 import PublicFooter from '../../components/PublicFooter.vue';
+import { useAuthStore } from "@/stores/auth";
 
+const authStore = useAuthStore();
 const route = useRoute();
 const articleId = route.params.id;
 
@@ -301,24 +390,59 @@ const emailInput = ref('');
 const commentText = ref('');
 const commentSubmitting = ref(false);
 const subscribeSubmitting = ref(false);
+const visibleCount = ref(2);
+const replyingTo = ref(null);
+const replyContent = ref('');
+
+const form = ref({
+    content: '',
+});
+
+const structureComments = (comments) => {
+    const commentMap = {};
+    const topLevelComments = [];
+
+    // First pass: create a map of all comments
+    comments.forEach(comment => {
+        comment.replies = [];
+        commentMap[comment.id] = comment;
+    });
+
+    // Second pass: build the hierarchy
+    comments.forEach(comment => {
+        if (comment.parent_id && commentMap[comment.parent_id]) {
+            commentMap[comment.parent_id].replies.push(comment);
+        } else {
+            topLevelComments.push(comment);
+        }
+    });
+
+    return topLevelComments;
+};
 
 // Fetch article data
 const fetchArticle = async () => {
     loading.value = true;
-    relatedLoading.value = true;
-    error.value = null;
-
     try {
         const response = await axios.get(`/api/articles/${articleId}`);
         article.value = response.data.article;
+        article.value.comments = structureComments(article.value.comments);
         relatedArticles.value = response.data.relatedArticles;
     } catch (err) {
-        console.error('Error fetching article:', err);
-        error.value = err.response?.data?.message || 'Failed to load article. Please try again later.';
+        console.error(err);
+        error.value = 'Failed to load article';
     } finally {
         loading.value = false;
         relatedLoading.value = false;
     }
+};
+
+const visibleComments = computed(() => {
+    return article.value.comments.slice(0, visibleCount.value);
+});
+
+const showMoreComments = () => {
+    visibleCount.value += 4;
 };
 
 // Format date to be more readable
@@ -345,25 +469,66 @@ const subscribeToNewsletter = async () => {
     }
 };
 
-// Add comment
-const addComment = async () => {
-    if (commentSubmitting.value || commentText.value.trim() === '') return;
+
+const addComment = async (parentId = null) => {
+    const content = parentId ? replyContent.value : form.value.content;
+
+    if (commentSubmitting.value || !content.trim()) {
+        return;
+    }
 
     commentSubmitting.value = true;
+
     try {
-        const response = await axios.post(`/api/articles/${articleId}/comments`, {
-            text: commentText.value
+        const response = await axios.post(`/api/comments/store`, {
+            content,
+            article_id: article.value.id,
+            parent_id: parentId
         });
 
-        // Add the new comment to the list
-        article.value.comments.unshift(response.data);
-        commentText.value = '';
+        const newComment = {
+            ...response.data.comment,
+            user: {
+                id: authStore.user.id,
+                name: authStore.user.name,
+                profile_image: authStore.user.profile_image
+            },
+            replies: []
+        };
+
+        if (parentId) {
+            // Add as reply
+            const parentComment = findComment(article.value.comments, parentId);
+            if (parentComment) {
+                parentComment.replies = parentComment.replies || [];
+                parentComment.replies.unshift(newComment);
+            }
+            replyContent.value = '';
+            replyingTo.value = null;
+        } else {
+            // Add as top-level comment
+            article.value.comments.unshift(newComment);
+            form.value.content = '';
+        }
+
     } catch (err) {
         console.error('Error posting comment:', err);
-        alert(err.response?.data?.message || 'Failed to post comment. Please try again later.');
+        alert(err.response?.data?.message || 'Failed to post comment');
     } finally {
         commentSubmitting.value = false;
     }
+};
+
+// Helper function to find a comment by ID (including in replies)
+const findComment = (comments, commentId) => {
+    for (const comment of comments) {
+        if (comment.id === commentId) return comment;
+        if (comment.replies?.length) {
+            const found = findComment(comment.replies, commentId);
+            if (found) return found;
+        }
+    }
+    return null;
 };
 
 // Share article

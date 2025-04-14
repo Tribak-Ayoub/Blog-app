@@ -12,8 +12,7 @@
 
         <!-- Comments List -->
         <div v-else class="space-y-6">
-            <div v-for="comment in comments" :key="comment.id" class="comment-item"
-                :class="{ 'border-l-4 border-yellow-300 pl-4': comment.status === 'pending' && moderationMode }">
+            <div v-for="comment in visibleComments" :key="comment.id" class="comment-item">
                 <div class="flex items-start gap-3">
                     <!-- Avatar -->
                     <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
@@ -35,61 +34,10 @@
                             <span class="text-xs text-gray-500">
                                 {{ formatDate(comment.created_at) }}
                             </span>
-
-                            <!-- Status Badge (only in moderation mode) -->
-                            <span v-if="moderationMode && comment.status" :class="[
-                                'px-2 py-0.5 rounded-full text-xs font-medium',
-                                comment.status === 'approved' ? 'bg-green-100 text-green-800' :
-                                    comment.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                                        'bg-yellow-100 text-yellow-800'
-                            ]">
-                                {{ comment.status.charAt(0).toUpperCase() + comment.status.slice(1) }}
-                            </span>
                         </div>
 
                         <div class="text-gray-700 text-sm whitespace-pre-line">
                             {{ comment.content }}
-                        </div>
-
-                        <!-- Moderation Actions -->
-                        <div v-if="moderationMode" class="mt-3 flex items-center gap-2">
-                            <button v-if="comment.status !== 'approved'" @click="$emit('approve', comment.id)"
-                                class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                                </svg>
-                                Approve
-                            </button>
-
-                            <button v-if="comment.status !== 'rejected'" @click="$emit('reject', comment.id)"
-                                class="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200 transition-colors flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <line x1="9" y1="10" x2="15" y2="10"></line>
-                                    <line x1="12" y1="7" x2="12" y2="13"></line>
-                                </svg>
-                                Reject
-                            </button>
-
-                            <button @click="confirmDelete(comment.id)"
-                                class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                    <path
-                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                                    </path>
-                                    <line x1="10" y1="11" x2="10" y2="17"></line>
-                                    <line x1="14" y1="11" x2="14" y2="17"></line>
-                                </svg>
-                                Delete
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -126,6 +74,13 @@
                     </div>
                 </div>
             </div>
+            <div v-if="comments.length > visibleCount" class="text-center mt-4">
+                <button @click="showMoreComments"
+                    class="px-4 py-2 text-sm font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors">
+                    Show More Comments
+                </button>
+            </div>
+
         </div>
 
         <!-- Delete Confirmation Modal -->
@@ -153,16 +108,12 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref } from 'vue';
+import { defineProps, defineEmits, ref, computed } from 'vue';
 
 const props = defineProps({
     comments: {
         type: Array,
         default: () => []
-    },
-    moderationMode: {
-        type: Boolean,
-        default: false
     }
 });
 
@@ -229,4 +180,15 @@ const handleDeleteConfirm = () => {
     showDeleteModal.value = false;
     commentToDelete.value = null;
 };
+
+const visibleCount = ref(4);
+
+const visibleComments = computed(() => {
+    return props.comments.slice(0, visibleCount.value);
+});
+
+const showMoreComments = () => {
+    visibleCount.value += 4;
+};
+
 </script>

@@ -4,7 +4,7 @@
             <!-- Header: Title + Create Button -->
             <div class="flex justify-between items-center">
                 <h2 class="text-2xl font-semibold text-gray-800">Tags</h2>
-                <router-link :to="{ name: 'admin-tag-create' }"
+                <router-link v-if="authStore.permissions.includes('create tag')" :to="{ name: 'admin-tag-create' }"
                     class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition">
                     + Create Tag
                 </router-link>
@@ -39,11 +39,11 @@
                             <td class="py-2 px-4">{{ index + 1 }}</td>
                             <td class="py-2 px-4">{{ tag.name }}</td>
                             <td class="py-2 px-4 space-x-2">
-                                <router-link :to="{ name: 'admin-tag-edit', params: { id: tag.id } }"
+                                <router-link v-if="authStore.permissions.includes('edit tag')" :to="{ name: 'admin-tag-edit', params: { id: tag.id } }"
                                     class="text-yellow-500 hover:underline">
                                     Edit
                                 </router-link>
-                                <button @click="deleteTag(tag.id)" class="text-red-500 hover:underline">
+                                <button v-if="authStore.permissions.includes('delete tag')" @click="deleteTag(tag.id)" class="text-red-500 hover:underline">
                                     Delete
                                 </button>
                             </td>
@@ -64,7 +64,9 @@
 import Layout from "../../../components/Layout.vue";
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
+import { useAuthStore } from "@/stores/auth";
 
+const authStore = useAuthStore();
 const tags = ref([]);
 const searchQuery = ref("");
 

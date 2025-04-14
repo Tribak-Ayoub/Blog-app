@@ -60,7 +60,7 @@ const submitForm = async () => {
                 name: selectedTagName.value,
             };
             await axios.put(`/api/tags/${selectedTagId.value}`, updatedTag); // Send updated Tag data
-            router.push('/tags'); // Redirect after update
+            router.push('/admin/tags'); // Redirect after update
         }
     } catch (error) {
         console.error('Error updating tag:', error);

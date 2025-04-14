@@ -4,7 +4,7 @@
             <!-- Header: Title + Create Button -->
             <div class="flex justify-between items-center">
                 <h2 class="text-2xl font-semibold text-gray-800">Categories</h2>
-                <router-link :to="{name: 'admin-category-create'}"
+                <router-link v-if="authStore.permissions.includes('create category')" :to="{name: 'admin-category-create'}"
                     class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition">
                     + Create Category
                 </router-link>
@@ -39,11 +39,11 @@
                             <td class="py-2 px-4">{{ index + 1 }}</td>
                             <td class="py-2 px-4">{{ category.name }}</td>
                             <td class="py-2 px-4 space-x-2">
-                                <router-link :to="{name: 'admin-category-edit', params: {id: category.id}}"
+                                <router-link v-if="authStore.permissions.includes('edit category')" :to="{name: 'admin-category-edit', params: {id: category.id}}"
                                     class="text-yellow-500 hover:underline">
                                     Edit
                                 </router-link>
-                                <button @click="deleteCategory(category.id)" class="text-red-500 hover:underline">
+                                <button v-if="authStore.permissions.includes('delete category')" @click="deleteCategory(category.id)" class="text-red-500 hover:underline">
                                     Delete
                                 </button>
                             </td>
@@ -64,7 +64,9 @@
 import Layout from "../../../components/Layout.vue";
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
+import { useAuthStore } from "@/stores/auth";
 
+const authStore = useAuthStore();
 const categories = ref([]);
 const searchQuery = ref("");
 
