@@ -481,7 +481,7 @@ const addComment = async (parentId = null) => {
 
     try {
         const response = await axios.post(`/api/comments/store`, {
-            content: form.value.content,
+            content,
             article_id: article.value.id,
             parent_id: parentId
         });

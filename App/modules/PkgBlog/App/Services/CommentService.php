@@ -32,6 +32,7 @@ class CommentService
             'content' => $data['content'],
             'user_id' => Auth::id(),
             'article_id' => $data['article_id'],
+            'parent_id' => $data['parent_id'],
         ]);
     }
 
@@ -41,6 +42,7 @@ class CommentService
             'content' => $data['content'],
             'user_id' => Auth::id(),
             'article_id' => $data['article_id'],
+            'parent_id' => $data['parent_id'],
         ]);
 
         return $comment;

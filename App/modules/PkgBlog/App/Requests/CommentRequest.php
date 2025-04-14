@@ -23,8 +23,8 @@ class CommentRequest extends FormRequest
     {
         return [
             'content' => 'required|string|max:1000',
-            'user_id' => 'required|exists:users,id',
             'article_id' => 'required|exists:articles,id',
+            'parent_id' => 'nullable|exists:comments,id',
         ];
     }
 }
