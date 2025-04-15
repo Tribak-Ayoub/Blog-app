@@ -1,7 +1,7 @@
 <template>
     <div class="min-h-screen bg-gray-50">
         <!-- Navigation Bar -->
-        <PublicNavbar :mobileMenuOpen="isMobileMenuOpen" @toggleMobileMenu="toggleMobileMenu" />
+        <PublicNavbar @search="handleSearch" :categories="categories"/>
 
         <!-- Loading State -->
         <div v-if="loading" class="flex justify-center items-center min-h-screen">
@@ -138,7 +138,7 @@
                             </div>
 
                             <!-- Author Bio -->
-                            <div class="mt-10 pt-8 border-t border-gray-200">
+                            <!-- <div class="mt-10 pt-8 border-t border-gray-200">
                                 <div
                                     class="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6 bg-gray-50 p-6 rounded-xl">
                                     <img :src="article.user.profile_image" :alt="article.user.name"
@@ -154,7 +154,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
                             <!-- Comments -->
                             <div class="mt-10 pt-8 border-t border-gray-200">
@@ -387,12 +387,12 @@ const loading = ref(true);
 const relatedLoading = ref(true);
 const error = ref(null);
 const emailInput = ref('');
-const commentText = ref('');
 const commentSubmitting = ref(false);
 const subscribeSubmitting = ref(false);
 const visibleCount = ref(2);
 const replyingTo = ref(null);
 const replyContent = ref('');
+const categories = ref([]);
 
 const form = ref({
     content: '',
@@ -428,6 +428,7 @@ const fetchArticle = async () => {
         article.value = response.data.article;
         article.value.comments = structureComments(article.value.comments);
         relatedArticles.value = response.data.relatedArticles;
+        categories.value = response.data.categories;
     } catch (err) {
         console.error(err);
         error.value = 'Failed to load article';

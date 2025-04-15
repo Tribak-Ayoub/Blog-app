@@ -61,7 +61,7 @@ const emit = defineEmits(['scrollToNewsletter']);
                         <div class="flex flex-col sm:flex-row">
                             <div class="p-6 flex-1">
                                 <span
-                                    class="inline-block px-3 py-1 bg-gray-100 text-xs font-semibold text-gray-600 rounded-full mb-3">Latest</span>
+                                    class="inline-block px-3 py-1 text-xs font-semibold bg-indigo-100 text-indigo-800 rounded-full mb-3">Latest</span>
                                 <router-link :to="{ name: 'article-detail', params: { id: featuredArticle.id } }"
                                     class="text-lg font-bold text-gray-900 mb-4 line-clamp-2">{{ featuredArticle.title
                                     }}</router-link>

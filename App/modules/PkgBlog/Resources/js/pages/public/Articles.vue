@@ -1,78 +1,6 @@
-<!-- <template>
-    <div class="articles-container">
-        <header class="articles-header">
-            <h1 class="page-title">Latest Articles</h1>
-            <p class="page-description">Explore our collection of thought-provoking articles and stay informed</p>
-        </header>
-
-        <div class="articles-grid">
-            <article v-for="article in filteredArticles" :key="article.id" class="article-card">
-                <div class="article-image-container">
-                    <img :src="article.image" :alt="article.title" class="article-image" />
-                    <span class="article-category">{{ article.category }}</span>
-                </div>
-                <div class="article-content">
-                    <h2 class="article-title">{{ article.title }}</h2>
-                    <p class="article-excerpt">{{ article.title }}</p>
-                    <div class="article-meta">
-                        <div class="article-author">
-                            <img :src="article.author || ''" :alt="article.author" class="author-avatar" />
-                            <span>{{ article.author }}</span>
-                        </div>
-                        <time :datetime="article.date" class="article-date">{{ formatDate(article.date) }}</time>
-                    </div>
-                    <button class="read-more-btn">Read More</button>
-                </div>
-            </article>
-        </div>
-
-        <div class="pagination">
-            <button class="pagination-btn" :disabled="currentPage === 1">&larr; Previous</button>
-            <span class="page-indicator">Page {{ currentPage }} of {{ totalPages }}</span>
-            <button class="pagination-btn" :disabled="currentPage === totalPages">Next &rarr;</button>
-        </div>
-    </div>
-</template>
-
-<script setup>
-import { ref, computed, onMounted } from "vue";
-import axios from "axios";
-
-const searchQuery = ref("");
-const articles = ref([]);
-
-// Fetch articles from the API
-const fetchArticles = async () => {
-    try {
-        const response = await axios.get("/api/articles");
-        articles.value = response.data.articles.data;
-    } catch (error) {
-        console.error("Error fetching articles:", error);
-    }
-};
-
-// Filter articles based on the search query
-const filteredArticles = computed(() => {
-    return articles.value.filter(article => {
-        return article.title.toLowerCase().includes(searchQuery.value.toLowerCase());
-    });
-});
-
-const currentPage = ref(1);
-const totalPages = ref(3);
-
-// Format date to be more readable
-const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-};
-
-onMounted(fetchArticles);
-</script> -->
-
 <template>
     <div class="bg-gray-50 min-h-screen">
-      <PublicNavbar />
+      <PublicNavbar @search="handleSearch" :categories="categories"/>
       <!-- Hero Section -->
       <div class="relative bg-gradient-to-r from-blue-500 to-purple-500 overflow-hidden">
         <div class="absolute inset-0 opacity-20">
@@ -427,7 +355,7 @@ onMounted(fetchArticles);
           </nav>
         </div>
       </div>
-      <PublicFooter />
+      <PublicFooter :categories="categories" />
     </div>
   </template>
   
@@ -455,7 +383,7 @@ onMounted(fetchArticles);
   const searchQuery = ref('');
   const selectedCategory = ref('');
   const selectedTag = ref('');
-  
+
   // Computed
   const hasActiveFilters = computed(() => {
     return searchQuery.value || selectedCategory.value || selectedTag.value;
@@ -508,15 +436,27 @@ onMounted(fetchArticles);
     }
   };
   
+
+
+// // Watch for route changes
+// watch(() => route.query, (newQuery) => {
+//   currentPage.value = parseInt(newQuery.page) || 1;
+//   selectedCategory.value = newQuery.category || '';
+//   selectedTag.value = newQuery.tag || '';
+//   searchQuery.value = newQuery.search || '';
+  
+//   fetchArticles();
+// }, { immediate: true });
+
   const filterArticles = () => {
     currentPage.value = 1;
     fetchArticles();
   };
   
-  const searchArticles = () => {
-    currentPage.value = 1;
-    fetchArticles();
-  };
+  // const searchArticles = () => {
+  //   currentPage.value = 1;
+  //   fetchArticles();
+  // };
   
   const clearCategoryFilter = () => {
     selectedCategory.value = '';
