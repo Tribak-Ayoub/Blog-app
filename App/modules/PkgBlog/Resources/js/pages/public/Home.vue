@@ -1,7 +1,7 @@
 <template>
     <div class="font-sans text-gray-900">
         <!-- Navigation Bar -->
-        <PublicNavbar :mobileMenuOpen="isMobileMenuOpen" @toggleMobileMenu="toggleMobileMenu" />
+        <PublicNavbar @search="handleSearch" :categories="categories"/>
 
         <!-- Loading State -->
         <div v-if="loading" class="flex justify-center items-center min-h-screen">
@@ -17,9 +17,9 @@
                     <line x1="12" y1="8" x2="12" y2="12"></line>
                     <line x1="12" y1="16" x2="12.01" y2="16"></line>
                 </svg>
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">Error Loading Article</h2>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Error Loading Home Page</h2>
                 <p class="text-gray-600 mb-4">{{ error }}</p>
-                <button @click="fetchArticle"
+                <button @click="fetchHomeData"
                     class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
                     Try Again
                 </button>
@@ -156,7 +156,6 @@ import PopularTags from '../../components/PopularTags.vue';
 import PublicFooter from '../../components/PublicFooter.vue';
 
 const loading = ref(true);
-const isMobileMenuOpen = ref(false);
 const emailInput = ref('');
 const selectedCategory = ref(null);
 
@@ -206,11 +205,6 @@ const filteredArticles = computed(() => {
 const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
-};
-
-// Toggle mobile menu
-const toggleMobileMenu = () => {
-    isMobileMenuOpen.value = !isMobileMenuOpen.value;
 };
 
 // Subscribe to newsletter

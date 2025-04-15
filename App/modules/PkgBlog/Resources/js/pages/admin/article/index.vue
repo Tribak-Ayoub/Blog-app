@@ -163,7 +163,7 @@ const fetchArticles = async (page = 1) => {
             last_page: response.data.articles.last_page
         };
 
-        totalPages.value = response.data.articles.last_page; // ✅ Important
+        totalPages.value = response.data.articles.last_page;
 
         categories.value = response.data.categories;
     } catch (error) {

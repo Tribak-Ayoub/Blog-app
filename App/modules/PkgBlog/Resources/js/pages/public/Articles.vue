@@ -1,6 +1,6 @@
 <template>
     <div class="bg-gray-50 min-h-screen">
-      <PublicNavbar :mobileMenuOpen="isMobileMenuOpen" @toggleMobileMenu="toggleMobileMenu" @searchQuery="searchQuery"/>
+      <PublicNavbar @search="handleSearch" :categories="categories"/>
       <!-- Hero Section -->
       <div class="relative bg-gradient-to-r from-blue-500 to-purple-500 overflow-hidden">
         <div class="absolute inset-0 opacity-20">
@@ -355,7 +355,7 @@
           </nav>
         </div>
       </div>
-      <PublicFooter />
+      <PublicFooter :categories="categories" />
     </div>
   </template>
   
@@ -383,7 +383,7 @@
   const searchQuery = ref('');
   const selectedCategory = ref('');
   const selectedTag = ref('');
-  
+
   // Computed
   const hasActiveFilters = computed(() => {
     return searchQuery.value || selectedCategory.value || selectedTag.value;
@@ -436,15 +436,27 @@
     }
   };
   
+
+
+// // Watch for route changes
+// watch(() => route.query, (newQuery) => {
+//   currentPage.value = parseInt(newQuery.page) || 1;
+//   selectedCategory.value = newQuery.category || '';
+//   selectedTag.value = newQuery.tag || '';
+//   searchQuery.value = newQuery.search || '';
+  
+//   fetchArticles();
+// }, { immediate: true });
+
   const filterArticles = () => {
     currentPage.value = 1;
     fetchArticles();
   };
   
-  const searchArticles = () => {
-    currentPage.value = 1;
-    fetchArticles();
-  };
+  // const searchArticles = () => {
+  //   currentPage.value = 1;
+  //   fetchArticles();
+  // };
   
   const clearCategoryFilter = () => {
     selectedCategory.value = '';

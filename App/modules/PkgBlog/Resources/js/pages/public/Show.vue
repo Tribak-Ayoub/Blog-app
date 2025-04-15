@@ -1,7 +1,7 @@
 <template>
     <div class="min-h-screen bg-gray-50">
         <!-- Navigation Bar -->
-        <PublicNavbar :mobileMenuOpen="isMobileMenuOpen" @toggleMobileMenu="toggleMobileMenu" />
+        <PublicNavbar @search="handleSearch" :categories="categories"/>
 
         <!-- Loading State -->
         <div v-if="loading" class="flex justify-center items-center min-h-screen">
@@ -387,12 +387,12 @@ const loading = ref(true);
 const relatedLoading = ref(true);
 const error = ref(null);
 const emailInput = ref('');
-const commentText = ref('');
 const commentSubmitting = ref(false);
 const subscribeSubmitting = ref(false);
 const visibleCount = ref(2);
 const replyingTo = ref(null);
 const replyContent = ref('');
+const categories = ref([]);
 
 const form = ref({
     content: '',
@@ -428,6 +428,7 @@ const fetchArticle = async () => {
         article.value = response.data.article;
         article.value.comments = structureComments(article.value.comments);
         relatedArticles.value = response.data.relatedArticles;
+        categories.value = response.data.categories;
     } catch (err) {
         console.error(err);
         error.value = 'Failed to load article';

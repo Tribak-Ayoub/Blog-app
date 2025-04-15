@@ -17,6 +17,7 @@ Route::prefix('api/articles')->middleware(['auth', 'web'])->group(function () {
     Route::get('/{article}/edit', [ArticleController::class, 'edit'])->name('articles.edit');
     Route::put('/{article}', [ArticleController::class, 'update'])->name('articles.update');
     Route::delete('/{article}', [ArticleController::class, 'destroy'])->name('articles.destroy');
+    Route::get('/search', [ArticleController::class, 'search']);
 });
 
 Route::prefix('api/articles')->group(function () {

@@ -97,7 +97,6 @@ import { defineProps } from 'vue';
 
 defineProps({
     categories: Array,
-    currentYear: Number,
 });
 const currentYear = computed(() => new Date().getFullYear());
 </script>
