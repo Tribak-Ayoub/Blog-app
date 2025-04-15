@@ -135,7 +135,7 @@
 
 <script setup>
 import { ref, watch, onMounted, onUnmounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
 const props = defineProps({
@@ -146,6 +146,7 @@ const props = defineProps({
 });
 
 const route = useRoute();
+const router = useRouter();
 const authStore = useAuthStore();
 
 // State
@@ -156,47 +157,12 @@ const isMobileMenuOpen = ref(false);
 const searchResults = ref([]);
 const showResults = ref(false);
 
-// Watch searchQuery and fetch results
-// watch(searchQuery, async (newQuery) => {
-//     if (newQuery.length > 1) {
-//         try {
-//             const { data } = await axios.get('/api/articles/search', {
-//                 params: { query: newQuery }
-//             });
-//             searchResults.value = data;
-//             showResults.value = true;
-//         } catch (err) {
-//             console.error(err);
-//             searchResults.value = [];
-//             showResults.value = false;
-//         }
-//     } else {
-//         // Reset the results when input is empty or too short
-//         searchResults.value = [];
-//         showResults.value = false;
-//     }
-// });
-
-// const handleInput = () => {
-//     if (searchQuery.value.trim() === '') {
-//         searchResults.value = [];
-//         showResults.value = false;
-//     }
-// };
-
 const goToArticle = (id) => {
-    route.push({ name: 'article-detail', params: { id } });
+    router.push({ name: 'article-detail', params: { id } });
     searchQuery.value = '';
     showResults.value = false;
 };
 
-
-
-
-
-// const searchQuery = ref('');
-// const searchResults = ref([]);
-// const showResults = ref(false);
 let searchTimeout = null;
 
 const handleSearchInput = () => {
