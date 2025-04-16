@@ -36,6 +36,13 @@ const routes = [
         meta: { requiresAuth: false },
     },
     {
+        path: "/about",
+        name: "about",
+        component: () =>
+            import("../../modules/PkgBlog/Resources/js/pages/public/About.vue"),
+        meta: { requiresAuth: false },
+    },
+    {
         path: "/admin/dashboard",
         name: "admin-dashboard",
         component: () =>
