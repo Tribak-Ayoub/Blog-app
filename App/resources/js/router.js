@@ -43,6 +43,13 @@ const routes = [
         meta: { requiresAuth: false },
     },
     {
+        path: "/contact",
+        name: "contact",
+        component: () =>
+            import("../../modules/PkgBlog/Resources/js/pages/public/Contact.vue"),
+        meta: { requiresAuth: false },
+    },
+    {
         path: "/admin/dashboard",
         name: "admin-dashboard",
         component: () =>

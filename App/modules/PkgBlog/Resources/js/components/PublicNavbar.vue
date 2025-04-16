@@ -226,7 +226,7 @@ const mainLinks = [
     { name: 'Home', to: { name: 'home' } },
     { name: 'Articles', to: { name: 'articles' } },
     { name: 'About', to: { name: 'about' } },
-    { name: 'Contact', to: { path: '/contact' } }
+    { name: 'Contact', to: { name: 'contact' } }
 ];
 
 // Toggle mobile menu
