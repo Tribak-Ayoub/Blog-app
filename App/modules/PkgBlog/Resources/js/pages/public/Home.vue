@@ -1,7 +1,7 @@
 <template>
     <div class="font-sans text-gray-900">
         <!-- Navigation Bar -->
-        <PublicNavbar @search="handleSearch" :categories="categories"/>
+        <PublicNavbar @search="handleSearch" :categories="categories" />
 
         <!-- Loading State -->
         <div v-if="loading" class="flex justify-center items-center min-h-screen">
@@ -135,8 +135,8 @@
             </section>
 
             <!-- Newsletter -->
-            <Newsletter ref="newsletterSection" v-model="emailInput" @subscribeToNewsletter="subscribeToNewsletter" />
-
+            <!-- <Newsletter ref="newsletterSection" v-model="emailInput" @subscribeToNewsletter="subscribeToNewsletter" /> -->
+            <ContactSection ref="newsletterSection" />
             <!-- Popular Tags -->
             <PopularTags :popularTags="popularTags" />
         </div>
@@ -154,6 +154,7 @@ import HeroSection from '../../components/HeroSection.vue';
 import Newsletter from '../../components/Newsletter.vue';
 import PopularTags from '../../components/PopularTags.vue';
 import PublicFooter from '../../components/PublicFooter.vue';
+import ContactSection from '../../components/About/ContactSection.vue';
 
 const loading = ref(true);
 const emailInput = ref('');
