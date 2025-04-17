@@ -46,7 +46,9 @@ const routes = [
         path: "/contact",
         name: "contact",
         component: () =>
-            import("../../modules/PkgBlog/Resources/js/pages/public/Contact.vue"),
+            import(
+                "../../modules/PkgBlog/Resources/js/pages/public/Contact.vue"
+            ),
         meta: { requiresAuth: false },
     },
     {
@@ -56,7 +58,7 @@ const routes = [
             import(
                 "../../modules/PkgBlog/Resources/js/pages/admin/Dashboard.vue"
             ),
-        meta: { requiresAuth: true, role: "admin" },
+        meta: { requiresAuth: true, role: ["admin", "editor"] },
     },
     {
         path: "/admin/articles",
@@ -170,7 +172,7 @@ const router = createRouter({
     routes,
     scrollBehavior(to, from, savedPosition) {
         return { top: 0 };
-      }
+    },
 });
 
 router.beforeEach((to, from, next) => {
