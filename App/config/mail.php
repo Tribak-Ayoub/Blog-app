@@ -113,4 +113,13 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Contact Form Settings
+    |--------------------------------------------------------------------------
+    */
+    'contact' => [
+        'email' => env('MAIL_CONTACT_ADDRESS', 'contact@yourdomain.com')
+    ],
+
 ];

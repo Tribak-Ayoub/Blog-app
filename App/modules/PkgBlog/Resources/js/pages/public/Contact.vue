@@ -1,6 +1,5 @@
 <template>
     <div>
-
         <PublicNavbar @search="handleSearch" :categories="categories" />
         <div class="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 py-12 px-4 sm:px-6 lg:px-8">
 
@@ -97,7 +96,6 @@
                                     <a href="#"
                                         class="p-3 bg-white/10 rounded-full hover:bg-white/20 transition-all duration-300 hover:scale-110">
                                         <i class="fa-brands fa-facebook h-5 w-5 text-center"></i>
-
                                     </a>
                                     <a href="#"
                                         class="p-3 bg-white/10 rounded-full hover:bg-white/20 transition-all duration-300 hover:scale-110">
@@ -185,7 +183,14 @@
                                     <button type="submit" :disabled="isSubmitting"
                                         class="inline-flex justify-center py-3 px-8 border border-transparent shadow-md text-base font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
                                         <span v-if="isSubmitting" class="flex items-center">
-                                            <Loader class="animate-spin -ml-1 mr-2 h-4 w-4" />
+                                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                    stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                                </path>
+                                            </svg>
                                             Sending...
                                         </span>
                                         <span v-else class="flex items-center">
@@ -199,16 +204,17 @@
                     </div>
                 </div>
 
-                <!-- Success Message -->
-                <div v-if="showSuccess"
+                <!-- Success/Error Message -->
+                <div v-if="showMessage"
                     class="mt-8 bg-gradient-to-r from-blue-50 to-purple-50 border-l-4 border-purple-400 p-4 rounded-lg shadow-md transform transition-all duration-500 animate-fade-in">
                     <div class="flex">
                         <div class="flex-shrink-0">
-                            <CheckCircle class="h-5 w-5 text-purple-500" />
+                            <i v-if="messageType === 'success'" class="fas fa-check-circle h-5 w-5 text-purple-500"></i>
+                            <i v-else class="fas fa-exclamation-circle h-5 w-5 text-red-500"></i>
                         </div>
                         <div class="ml-3">
                             <p class="text-sm text-slate-700">
-                                Thank you for your message! We'll get back to you soon.
+                                {{ message }}
                             </p>
                         </div>
                     </div>
@@ -221,8 +227,16 @@
 
 <script setup>
 import { ref } from 'vue';
+import axios from 'axios';
 import PublicNavbar from '../../components/PublicNavbar.vue';
 import PublicFooter from '../../components/PublicFooter.vue';
+
+const props = defineProps({
+    categories: {
+        type: Array,
+        default: () => []
+    }
+});
 
 const form = ref({
     name: '',
@@ -240,65 +254,105 @@ const errors = ref({
 });
 
 const isSubmitting = ref(false);
-const showSuccess = ref(false);
+const showMessage = ref(false);
+const message = ref('');
+const messageType = ref('');
 
 const validateForm = () => {
     let isValid = true;
 
-    errors.name = '';
-    errors.email = '';
-    errors.subject = '';
-    errors.message = '';
+    // Reset errors
+    errors.value = {
+        name: '',
+        email: '',
+        subject: '',
+        message: ''
+    };
 
-    if (!form.name.trim()) {
-        errors.name = 'Name is required';
+    if (!form.value.name.trim()) {
+        errors.value.name = 'Name is required';
         isValid = false;
     }
 
-    if (!form.email.trim()) {
-        errors.email = 'Email is required';
+    if (!form.value.email.trim()) {
+        errors.value.email = 'Email is required';
         isValid = false;
-    } else if (!/^\S+@\S+\.\S+$/.test(form.email)) {
-        errors.email = 'Please enter a valid email address';
-        isValid = false;
-    }
-
-    if (!form.subject.trim()) {
-        errors.subject = 'Subject is required';
+    } else if (!/^\S+@\S+\.\S+$/.test(form.value.email)) {
+        errors.value.email = 'Please enter a valid email address';
         isValid = false;
     }
 
-    if (!form.message.trim()) {
-        errors.message = 'Message is required';
+    if (!form.value.subject.trim()) {
+        errors.value.subject = 'Subject is required';
         isValid = false;
-    } else if (form.message.trim().length < 10) {
-        errors.message = 'Message must be at least 10 characters';
+    }
+
+    if (!form.value.message.trim()) {
+        errors.value.message = 'Message is required';
+        isValid = false;
+    } else if (form.value.message.trim().length < 10) {
+        errors.value.message = 'Message must be at least 10 characters';
         isValid = false;
     }
 
     return isValid;
 };
 
-const submitForm = () => {
+const submitForm = async () => {
     if (!validateForm()) return;
 
     isSubmitting.value = true;
 
-    setTimeout(() => {
-        isSubmitting.value = false;
-        showSuccess.value = true;
+    try {
+        const response = await axios.post('/api/contact', {
+            name: form.value.name,
+            email: form.value.email,
+            subject: form.value.subject,
+            message: form.value.message,
+            newsletter: form.value.newsletter
+        });
+
+        // Show success message
+        message.value = "Thank you for your message! We'll get back to you soon.";
+        messageType.value = 'success';
+        showMessage.value = true;
 
         // Reset form
-        form.name = '';
-        form.email = '';
-        form.subject = '';
-        form.message = '';
-        form.newsletter = false;
+        form.value = {
+            name: '',
+            email: '',
+            subject: '',
+            message: '',
+            newsletter: false
+        };
 
+        // Hide message after 5 seconds
         setTimeout(() => {
-            showSuccess.value = false;
+            showMessage.value = false;
         }, 5000);
-    }, 2000);
+
+    } catch (error) {
+        if (error.response && error.response.data.errors) {
+            // Handle validation errors from server
+            errors.value = error.response.data.errors;
+        } else {
+            // Show error message
+            message.value = "An error occurred while sending your message. Please try again later.";
+            messageType.value = 'error';
+            showMessage.value = true;
+
+            setTimeout(() => {
+                showMessage.value = false;
+            }, 5000);
+        }
+    } finally {
+        isSubmitting.value = false;
+    }
+};
+
+const handleSearch = (searchTerm) => {
+    // Handle search functionality if needed
+    console.log('Search term:', searchTerm);
 };
 </script>
 

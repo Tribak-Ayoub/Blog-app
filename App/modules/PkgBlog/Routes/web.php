@@ -7,6 +7,7 @@ use Modules\PkgBlog\App\Controllers\ArticleImageController;
 use Modules\PkgBlog\App\Controllers\CategoryController;
 use Modules\PkgBlog\App\Controllers\ChartDataController;
 use Modules\PkgBlog\App\Controllers\CommentController;
+use Modules\PkgBlog\App\Controllers\ContactController;
 use Modules\PkgBlog\App\Controllers\HomeController;
 use Modules\PkgBlog\App\Controllers\TagController;
 
@@ -59,3 +60,4 @@ Route::prefix('/chart-data')->middleware(['auth', 'web'])->group(function () {
 });
 
 Route::get('/api/home-data', [HomeController::class, 'index'])->name('home.index');
+Route::post('/api/contact', [ContactController::class, '__invoke'])->name('contact.submit');
