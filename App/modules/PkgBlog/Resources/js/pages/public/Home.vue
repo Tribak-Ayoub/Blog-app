@@ -136,7 +136,8 @@
 
             <!-- Newsletter -->
             <!-- <Newsletter ref="newsletterSection" v-model="emailInput" @subscribeToNewsletter="subscribeToNewsletter" /> -->
-            <ContactSection ref="newsletterSection" />
+            <ContactSection ref="newsletterSection" @subscribe="subscribeToNewsletter" />
+
             <!-- Popular Tags -->
             <PopularTags :popularTags="popularTags" />
         </div>
@@ -209,9 +210,22 @@ const formatDate = (dateString) => {
 };
 
 // Subscribe to newsletter
-const subscribeToNewsletter = () => {
-    alert(`Subscribed: ${emailInput.value}`);
+const subscribeToNewsletter = (email) => {
+
+    if (email) {
+        axios.post('/api/subscribe', { email })
+            .then(response => {
+                console.log("Subscribed successfully:", response.data);
+                emailInput.value = '';
+            })
+            .catch(error => {
+                console.error("Subscription Error:", error);
+            });
+    } else {
+        console.error("Email is required for subscription.");
+    }
 };
+
 
 onMounted(fetchHomeData);
 </script>

@@ -28,14 +28,13 @@
 </template>
 
 <script setup>
-import { ref, defineComponent } from 'vue';
-
+import { ref } from 'vue';
 const email = ref('');
 
+const emit = defineEmits(['subscribe']);
+
 const handleSubscribe = () => {
-    // Here you would implement your newsletter subscription logic
-    alert(`Thank you for subscribing with: ${email.value}`);
+    emit('subscribe', email.value);
     email.value = '';
 };
-
 </script>

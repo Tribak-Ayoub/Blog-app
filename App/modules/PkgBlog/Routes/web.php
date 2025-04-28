@@ -9,6 +9,7 @@ use Modules\PkgBlog\App\Controllers\ChartDataController;
 use Modules\PkgBlog\App\Controllers\CommentController;
 use Modules\PkgBlog\App\Controllers\ContactController;
 use Modules\PkgBlog\App\Controllers\HomeController;
+use Modules\PkgBlog\App\Controllers\NewsletterController;
 use Modules\PkgBlog\App\Controllers\TagController;
 
 Route::prefix('api/articles')->group(function () {
@@ -61,3 +62,5 @@ Route::prefix('/chart-data')->middleware(['auth', 'web'])->group(function () {
 
 Route::get('/api/home-data', [HomeController::class, 'index'])->name('home.index');
 Route::post('/api/contact', [ContactController::class, '__invoke'])->name('contact.submit');
+
+Route::post('/api/subscribe', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
