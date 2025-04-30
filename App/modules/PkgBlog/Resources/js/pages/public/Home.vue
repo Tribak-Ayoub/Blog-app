@@ -1,5 +1,11 @@
 <template>
     <div class="font-sans text-gray-900">
+        <!-- Success Message -->
+        <div v-if="successMessage"
+            class="fixed top-14 left-1/2 transform -translate-x-1/2 p-4 bg-green-500 text-white rounded-lg shadow-lg max-w-xs z-10">
+            <p class="font-semibold">{{ successMessage }}</p>
+        </div>
+
         <!-- Navigation Bar -->
         <PublicNavbar @search="handleSearch" :categories="categories" />
 
@@ -160,6 +166,7 @@ import ContactSection from '../../components/About/ContactSection.vue';
 const loading = ref(true);
 const emailInput = ref('');
 const selectedCategory = ref(null);
+const successMessage = ref('');
 
 const articlesCount = ref(0);
 const readersCount = ref(0);
@@ -210,19 +217,15 @@ const formatDate = (dateString) => {
 };
 
 // Subscribe to newsletter
-const subscribeToNewsletter = (email) => {
-
-    if (email) {
-        axios.post('/api/subscribe', { email })
-            .then(response => {
-                console.log("Subscribed successfully:", response.data);
-                emailInput.value = '';
-            })
-            .catch(error => {
-                console.error("Subscription Error:", error);
-            });
-    } else {
-        console.error("Email is required for subscription.");
+const subscribeToNewsletter = async (email) => {
+    try {
+        const response = await axios.post('/api/subscribe', { email });
+        successMessage.value = 'Thank you for subscribing!';
+        setTimeout(() => {
+            successMessage.value = '';
+        }, 5000);
+    } catch (error) {
+        console.error('Subscription failed:', error);
     }
 };
 

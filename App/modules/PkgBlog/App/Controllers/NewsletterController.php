@@ -2,31 +2,43 @@
 
 namespace Modules\PkgBlog\App\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
 use Modules\Core\App\Controllers\BaseController;
-use Illuminate\Routing\Controller;
 use Spatie\Newsletter\Facades\Newsletter;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Modules\PkgBlog\App\Mail\SubscriptionConfirmation;
 
 class NewsletterController extends BaseController
 {
+
     public function subscribe(Request $request)
     {
         $request->validate(['email' => 'required|email']);
 
         if (!Newsletter::isSubscribed($request->email)) {
-            $response = Newsletter::subscribe($request->email);
+            try {
+                $response = Newsletter::subscribe(
+                    $request->email,
+                    [],
+                    'default',
+                    ['status' => 'subscribed']
+                );
 
-            // Check if the response is valid
-            if ($response) {
-                Log::info('Subscription successful', ['email' => $request->email]);
-            } else {
-                Log::info('Subscription failed', ['email' => $request->email]);
+                // Send the confirmation email
+                Mail::to($request->email)->send(new SubscriptionConfirmation($request->email));
+
+                return response()->json([
+                    'message' => 'You are now subscribed!',
+                    'response' => $response
+                ], 200);
+            } catch (Exception $e) {
+
+                return response()->json([
+                    'message' => 'Subscription failed.',
+                    'error' => $e->getMessage(),
+                ], 500);
             }
-
-            return response()->json([
-                'message' => 'You are now subscribed!',
-            ], 200);
         }
 
         return response()->json([
