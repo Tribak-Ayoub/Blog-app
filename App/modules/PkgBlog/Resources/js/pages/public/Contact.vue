@@ -1,6 +1,6 @@
 <template>
     <div>
-        <PublicNavbar @search="handleSearch" :categories="categories" />
+        <PublicNavbar />
         <div class="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 py-12 px-4 sm:px-6 lg:px-8">
 
             <!-- Decorative Elements -->
@@ -231,13 +231,6 @@ import axios from 'axios';
 import PublicNavbar from '../../components/PublicNavbar.vue';
 import PublicFooter from '../../components/PublicFooter.vue';
 
-const props = defineProps({
-    categories: {
-        type: Array,
-        default: () => []
-    }
-});
-
 const form = ref({
     name: '',
     email: '',
@@ -350,10 +343,6 @@ const submitForm = async () => {
     }
 };
 
-const handleSearch = (searchTerm) => {
-    // Handle search functionality if needed
-    console.log('Search term:', searchTerm);
-};
 </script>
 
 <style>

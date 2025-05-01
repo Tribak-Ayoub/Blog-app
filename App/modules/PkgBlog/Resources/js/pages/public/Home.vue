@@ -7,7 +7,7 @@
         </div>
 
         <!-- Navigation Bar -->
-        <PublicNavbar @search="handleSearch" :categories="categories" />
+        <PublicNavbar />
 
         <!-- Loading State -->
         <div v-if="loading" class="flex justify-center items-center min-h-screen">
@@ -148,7 +148,7 @@
             <PopularTags :popularTags="popularTags" />
         </div>
         <!-- Footer -->
-        <PublicFooter :categories="categories" />
+        <PublicFooter />
     </div>
 
 </template>
@@ -172,7 +172,7 @@ const articlesCount = ref(0);
 const readersCount = ref(0);
 const categoriesCount = ref(0);
 const featuredArticle = ref(null);
-const categories = ref([]);
+// const categories = ref([]);
 const popularTags = ref([]);
 const recentArticles = ref([]);
 const newsletterSection = ref(null)
@@ -190,7 +190,7 @@ const fetchHomeData = async () => {
         readersCount.value = data.readersCount;
         categoriesCount.value = data.categoriesCount;
         featuredArticle.value = data.featuredArticle || null;
-        categories.value = data.categories || [];
+        // categories.value = data.categories || [];
         popularTags.value = data.popularTags || [];
         recentArticles.value = data.recentArticles || [];
     } catch (error) {
