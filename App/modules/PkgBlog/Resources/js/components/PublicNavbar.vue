@@ -105,7 +105,7 @@
                     {{ link.name }}
                 </router-link>
 
-                <div v-if="categories.length" class="pt-2">
+                <div v-if="!loading && categories.length" class="pt-2">
                     <div class="text-gray-500 font-medium">Categories</div>
                     <div class="pl-4 mt-2 space-y-2">
                         <router-link v-for="category in categories" :key="category.id"
@@ -138,13 +138,6 @@ import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
-const props = defineProps({
-    categories: {
-        type: Array,
-        default: () => []
-    }
-});
-
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
@@ -157,6 +150,20 @@ const isMobileMenuOpen = ref(false);
 const searchResults = ref([]);
 const showResults = ref(false);
 
+const categories = ref([]);
+const loading = ref(true);
+
+const fetchCategories = async () => {
+    try {
+        const response = await axios.get('/api/categories');
+        categories.value = response.data.data;
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+    } finally {
+        loading.value = false;
+    }
+}
+
 const goToArticle = (id) => {
     router.push({ name: 'article-detail', params: { id } });
     searchQuery.value = '';
@@ -167,7 +174,7 @@ let searchTimeout = null;
 
 const handleSearchInput = () => {
     clearTimeout(searchTimeout);
-    
+
     // Immediately hide results if query is empty
     if (searchQuery.value.trim() === '') {
         searchResults.value = [];
@@ -211,6 +218,7 @@ const handleClickOutside = (event) => {
 
 onMounted(() => {
     document.addEventListener('click', handleClickOutside);
+    fetchCategories();
 });
 
 onUnmounted(() => {
@@ -226,7 +234,7 @@ const mainLinks = [
     { name: 'Home', to: { name: 'home' } },
     { name: 'Articles', to: { name: 'articles' } },
     { name: 'About', to: { name: 'about' } },
-    { name: 'Contact', to: { path: '/contact' } }
+    { name: 'Contact', to: { name: 'contact' } }
 ];
 
 // Toggle mobile menu

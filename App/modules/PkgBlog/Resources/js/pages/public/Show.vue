@@ -1,7 +1,13 @@
 <template>
     <div class="min-h-screen bg-gray-50">
         <!-- Navigation Bar -->
-        <PublicNavbar @search="handleSearch" :categories="categories"/>
+        <PublicNavbar />
+
+        <!-- Success Message -->
+        <div v-if="successMessage"
+            class="fixed top-14 left-1/2 transform -translate-x-1/2 p-4 bg-green-500 text-white rounded-lg shadow-lg max-w-xs z-10">
+            <p class="font-semibold">{{ successMessage }}</p>
+        </div>
 
         <!-- Loading State -->
         <div v-if="loading" class="flex justify-center items-center min-h-screen">
@@ -206,8 +212,8 @@
 
                                 <!-- Comments List -->
                                 <div v-if="article.comments.length > 0" class="space-y-6">
-                                    <div v-for="(comment) in visibleComments" :key="comment.id"
-                                        class="flex gap-4" :aria-labelledby="'comment-heading-' + comment.id">
+                                    <div v-for="(comment) in visibleComments" :key="comment.id" class="flex gap-4"
+                                        :aria-labelledby="'comment-heading-' + comment.id">
                                         <img :src="comment.user.profile_image" :alt="comment.user.name"
                                             class="w-10 h-10 rounded-full object-cover flex-shrink-0" />
 
@@ -309,7 +315,7 @@
                             <p class="text-gray-600 mb-4">Get the latest articles and insights straight to your inbox.
                             </p>
                             <form @submit.prevent="subscribeToNewsletter" class="space-y-3">
-                                <input type="email" v-model="emailInput" placeholder="Your email address"
+                                <input type="email" v-model="email" placeholder="Your email address"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     required />
                                 <button type="submit" :disabled="subscribeSubmitting"
@@ -364,7 +370,7 @@
             </div>
         </div>
         <!-- Footer -->
-        <PublicFooter :categories="categories" />
+        <PublicFooter />
     </div>
 </template>
 
@@ -386,13 +392,14 @@ const relatedArticles = ref([]);
 const loading = ref(true);
 const relatedLoading = ref(true);
 const error = ref(null);
-const emailInput = ref('');
+const email = ref('');
 const commentSubmitting = ref(false);
 const subscribeSubmitting = ref(false);
 const visibleCount = ref(2);
 const replyingTo = ref(null);
 const replyContent = ref('');
 const categories = ref([]);
+const successMessage = ref('');
 
 const form = ref({
     content: '',
@@ -459,12 +466,14 @@ const subscribeToNewsletter = async () => {
 
     subscribeSubmitting.value = true;
     try {
-        await axios.post('/api/newsletter/subscribe', { email: emailInput.value });
-        alert('Thank you for subscribing to our newsletter!');
-        emailInput.value = '';
-    } catch (err) {
-        console.error('Error subscribing to newsletter:', err);
-        alert(err.response?.data?.message || 'Failed to subscribe. Please try again later.');
+        const response = await axios.post('/api/subscribe', { email: email.value });
+        successMessage.value = 'Thank you for subscribing!';
+        email.value = '';
+        setTimeout(() => {
+            successMessage.value = '';
+        }, 3000);
+    } catch (error) {
+        console.error('Subscription failed:', error);
     } finally {
         subscribeSubmitting.value = false;
     }

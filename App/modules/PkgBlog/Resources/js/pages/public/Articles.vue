@@ -1,8 +1,8 @@
 <template>
   <div class="bg-gray-50 min-h-screen">
-    <PublicNavbar @search="handleSearch" :categories="categories" />
+    <PublicNavbar @search="handleSearch" />
     <!-- Hero Section -->
-    <div class="relative py-24 md:py-32 overflow-hidden bg-gradient-to-r from-blue-500 to-purple-600">
+    <div class="relative py-16 md:py-20 overflow-hidden bg-gradient-to-r from-blue-500 to-purple-600">
       <div class="absolute inset-0 opacity-20">
         <svg class="h-full w-full" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -23,7 +23,7 @@
             class="text-white"></path>
         </svg>
       </div>
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 relative">
         <div class="text-center">
           <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl">
             Our Articles
@@ -324,7 +324,7 @@
         </nav>
       </div>
     </div>
-    <PublicFooter :categories="categories" />
+    <PublicFooter />
   </div>
 </template>
 

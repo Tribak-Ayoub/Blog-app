@@ -7,7 +7,9 @@ use Modules\PkgBlog\App\Controllers\ArticleImageController;
 use Modules\PkgBlog\App\Controllers\CategoryController;
 use Modules\PkgBlog\App\Controllers\ChartDataController;
 use Modules\PkgBlog\App\Controllers\CommentController;
+use Modules\PkgBlog\App\Controllers\ContactController;
 use Modules\PkgBlog\App\Controllers\HomeController;
+use Modules\PkgBlog\App\Controllers\NewsletterController;
 use Modules\PkgBlog\App\Controllers\TagController;
 
 Route::prefix('api/articles')->group(function () {
@@ -27,13 +29,17 @@ Route::prefix('api/articles')->group(function () {
     Route::get('/{article}', [ArticleController::class, 'show'])->name('articles.show');
 });
 
-Route::prefix('api/categories')->middleware(['auth', 'web'])->group(function () {
+Route::prefix('api/categories')->group(function () {
+
     Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
-    Route::get('/create', [CategoryController::class, 'create'])->name('categories.create');
-    Route::post('/store', [CategoryController::class, 'store'])->name('categories.store');
-    Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
-    Route::get('/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
-    Route::put('/{category}', [CategoryController::class, 'update'])->name('categories.update');
+
+    Route::middleware(['auth', 'web'])->group(function () {
+        Route::get('/create', [CategoryController::class, 'create'])->name('categories.create');
+        Route::post('/store', [CategoryController::class, 'store'])->name('categories.store');
+        Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+        Route::get('/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+        Route::put('/{category}', [CategoryController::class, 'update'])->name('categories.update');
+    });
 });
 
 Route::prefix('api/tags')->middleware(['auth', 'web'])->group(function () {
@@ -59,3 +65,6 @@ Route::prefix('/chart-data')->middleware(['auth', 'web'])->group(function () {
 });
 
 Route::get('/api/home-data', [HomeController::class, 'index'])->name('home.index');
+Route::post('/api/contact', [ContactController::class, '__invoke'])->name('contact.submit');
+
+Route::post('/api/subscribe', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');

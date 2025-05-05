@@ -1,7 +1,13 @@
 <template>
     <div class="font-sans text-gray-900">
+        <!-- Success Message -->
+        <div v-if="successMessage"
+            class="fixed top-14 left-1/2 transform -translate-x-1/2 p-4 bg-green-500 text-white rounded-lg shadow-lg max-w-xs z-10">
+            <p class="font-semibold">{{ successMessage }}</p>
+        </div>
+
         <!-- Navigation Bar -->
-        <PublicNavbar @search="handleSearch" :categories="categories" />
+        <PublicNavbar />
 
         <!-- Loading State -->
         <div v-if="loading" class="flex justify-center items-center min-h-screen">
@@ -136,12 +142,13 @@
 
             <!-- Newsletter -->
             <!-- <Newsletter ref="newsletterSection" v-model="emailInput" @subscribeToNewsletter="subscribeToNewsletter" /> -->
-            <ContactSection ref="newsletterSection" />
+            <ContactSection ref="newsletterSection" @subscribe="subscribeToNewsletter" />
+
             <!-- Popular Tags -->
             <PopularTags :popularTags="popularTags" />
         </div>
         <!-- Footer -->
-        <PublicFooter :categories="categories" />
+        <PublicFooter />
     </div>
 
 </template>
@@ -159,12 +166,13 @@ import ContactSection from '../../components/About/ContactSection.vue';
 const loading = ref(true);
 const emailInput = ref('');
 const selectedCategory = ref(null);
+const successMessage = ref('');
 
 const articlesCount = ref(0);
 const readersCount = ref(0);
 const categoriesCount = ref(0);
 const featuredArticle = ref(null);
-const categories = ref([]);
+// const categories = ref([]);
 const popularTags = ref([]);
 const recentArticles = ref([]);
 const newsletterSection = ref(null)
@@ -182,7 +190,7 @@ const fetchHomeData = async () => {
         readersCount.value = data.readersCount;
         categoriesCount.value = data.categoriesCount;
         featuredArticle.value = data.featuredArticle || null;
-        categories.value = data.categories || [];
+        // categories.value = data.categories || [];
         popularTags.value = data.popularTags || [];
         recentArticles.value = data.recentArticles || [];
     } catch (error) {
@@ -209,9 +217,18 @@ const formatDate = (dateString) => {
 };
 
 // Subscribe to newsletter
-const subscribeToNewsletter = () => {
-    alert(`Subscribed: ${emailInput.value}`);
+const subscribeToNewsletter = async (email) => {
+    try {
+        const response = await axios.post('/api/subscribe', { email });
+        successMessage.value = 'Thank you for subscribing!';
+        setTimeout(() => {
+            successMessage.value = '';
+        }, 5000);
+    } catch (error) {
+        console.error('Subscription failed:', error);
+    }
 };
+
 
 onMounted(fetchHomeData);
 </script>
