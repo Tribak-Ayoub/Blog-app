@@ -12,7 +12,7 @@
         <!-- Navigation Menu -->
         <div class="p-4 flex-1">
             <ul class="space-y-2">
-                <li v-if="authStore.roles.includes('admin')">
+                <li v-if="authStore.roles.includes('admin') || authStore.roles.includes('editor')">
                     <router-link :to="{ name: 'admin-dashboard' }" class="flex items-center p-2 hover:bg-gray-700 rounded">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

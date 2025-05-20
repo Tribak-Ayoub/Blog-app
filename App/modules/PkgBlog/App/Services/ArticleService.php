@@ -169,4 +169,11 @@ class ArticleService
             ->take($limit)
             ->get();
     }
+
+    public function search(string $query)
+    {
+        return Article::where('title', 'like', '%' . $query . '%')
+            ->limit(10)
+            ->get(['id', 'title', 'featured_image']);
+    }
 }

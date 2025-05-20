@@ -8,12 +8,9 @@
                     <div class="flex space-x-4">
                         <a href="#"
                             class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition duration-200">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <path
-                                    d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z">
-                                </path>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 512 512">
+                                <path fill="#ffffff"
+                                    d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
                             </svg>
                         </a>
                         <a href="#"
@@ -47,6 +44,26 @@
                             </svg>
                         </a>
                     </div>
+                    <!-- <SocialLinks wrapperClass="flex justify-center gap-3">
+                        <a href="#"
+                            class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center hover:bg-blue-800 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53..."></path>
+                            </svg>
+                        </a>
+
+                        <a href="#"
+                            class="w-10 h-10 rounded-full bg-pink-600 text-white flex items-center justify-center hover:bg-pink-800 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4..."></path>
+                            </svg>
+                        </a>
+
+                    </SocialLinks> -->
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold mb-5">Navigation</h3>
@@ -66,7 +83,7 @@
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold mb-5">Categories</h3>
-                    <ul class="space-y-3">
+                    <ul v-if="!loading && categories.length" class="space-y-3">
                         <li v-for="category in categories" :key="category.id"
                             class="text-gray-400 hover:text-white transition duration-200">
                             {{ category.name }}
@@ -92,12 +109,25 @@
     </footer>
 </template>
 <script setup>
-import { computed } from 'vue';
-import { defineProps } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import SocialLinks from './SocialLinks.vue';
+import axios from 'axios';
 
-defineProps({
-    categories: Array,
-    currentYear: Number,
-});
+const categories = ref([]);
+const loading = ref(true);
+
+const fetchCategories = async () => {
+    try {
+        const response = await axios.get('/api/categories');
+        categories.value = response.data.data;
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+    }finally {
+        loading.value = false;
+    }
+}
+
 const currentYear = computed(() => new Date().getFullYear());
+
+onMounted(fetchCategories);
 </script>

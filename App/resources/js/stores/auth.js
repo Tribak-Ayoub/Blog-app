@@ -35,6 +35,9 @@ export const useAuthStore = defineStore("auth", {
             return this.permissions.includes(permission);
         },
         hasRole(role) {
+            if (Array.isArray(role)) {
+                return role.some((r) => this.roles.includes(r));
+            }
             return this.roles.includes(role);
         },
     },

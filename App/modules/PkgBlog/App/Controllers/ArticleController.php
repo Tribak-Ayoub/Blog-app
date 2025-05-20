@@ -32,7 +32,6 @@ class ArticleController extends BaseController
         ];
 
         $articles = $this->articleService->paginate($filters);
-        // $articles->load('category', 'user');
         $categories = Category::all();
         $tags = Tag::all();
 
@@ -41,28 +40,20 @@ class ArticleController extends BaseController
             'categories' => $categories,
             'tags' => $tags
         ]);
-
-        // if (Auth::check() && Auth::user()->can('viewAny', Article::class)) {
-        //     return response()->json([
-        //         'articles' => $articles,
-        //         'categories' => $categories,
-        //         'tags' => $tags
-        //     ]);
-        // }
-
-        // return 'You are not authorized to view this page';
     }
 
     public function show(string $id)
     {
         $article = $this->articleService->getArticleById($id);
         $relatedArticles = $this->articleService->getRelatedArticles($article);
+        $categories = Category::all();
         $commentableId = $article->id;
         $commentableType = Article::class;
 
         return response()->json([
             'article' => $article,
             'relatedArticles' => $relatedArticles,
+            'categories' => $categories,
         ]);
     }
 
@@ -96,7 +87,7 @@ class ArticleController extends BaseController
         return response()->json([
             'message' => "The article has been created",
             'article' => $article,
-            'featured_image_url' => $article->featured_image_url // Add this accessor
+            'featured_image_url' => $article->featured_image_url
         ], Response::HTTP_CREATED);
     }
 
@@ -149,5 +140,17 @@ class ArticleController extends BaseController
         return response()->json([
             'message' => "The article has been deleted"
         ], Response::HTTP_NO_CONTENT);
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->query('query');
+
+        if (!$query || strlen($query) < 2) {
+            return response()->json([]);
+        }
+
+        $articles = $this->articleService->search($query);
+        return response()->json($articles);
     }
 }
