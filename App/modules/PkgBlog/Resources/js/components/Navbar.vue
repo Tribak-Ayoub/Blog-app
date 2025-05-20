@@ -26,7 +26,7 @@
 </template>
 
 <script setup>
-import breadcrumbs from './breadcrumbs.vue';
+import breadcrumbs from './Breadcrumbs.vue';
 const emit = defineEmits(['toggle-sidebar']);
 
 const toggleSidebar = () => {
