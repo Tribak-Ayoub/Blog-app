@@ -1,42 +1,48 @@
-# Use PHP 8.2 base with Apache
-FROM php:8.3-apache
+FROM php:8.3-fpm
 
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
-
-# Set working directory
-WORKDIR /var/www/html
-
-# Install system dependencies
+# Install dependencies
 RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
-    curl \
-    libzip-dev \
-    zip \
+    build-essential \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
     libonig-dev \
     libxml2-dev \
+    zip \
+    unzip \
+    curl \
+    git \
     npm \
-    nodejs
+    nodejs \
+    libzip-dev \
+    mariadb-client
+
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql zip mbstring exif pcntl bcmath
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy app files
-COPY . .
+# Set working directory
+WORKDIR /var/www
 
-# Install PHP deps
+# Copy existing application directory contents
+COPY . /var/www
+
+# Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Build Vue frontend
+# Build Vue (if you're using Vite)
 RUN npm install && npm run build
 
-# Set proper permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage
+# Set permissions
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-# Apache config for Laravel
-COPY ./docker/apache.conf /etc/apache2/sites-available/000-default.conf
+# Expose port
+EXPOSE 8000
+
+# Start Laravel
+CMD php artisan serve --host=0.0.0.0 --port=8000
