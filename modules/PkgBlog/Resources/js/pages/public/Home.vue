@@ -41,7 +41,7 @@
 
             <!-- Featured Article -->
             <section class="bg-gray-50 pt-24 pb-16">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <h2 class="text-3xl font-bold text-center mb-12">Featured Article</h2>
                     <div v-if="featuredArticle?.id"
                         class="bg-white rounded-xl overflow-hidden shadow-lg flex flex-col md:flex-row">
@@ -172,7 +172,7 @@ const articlesCount = ref(0);
 const readersCount = ref(0);
 const categoriesCount = ref(0);
 const featuredArticle = ref(null);
-// const categories = ref([]);
+const categories = ref([]);
 const popularTags = ref([]);
 const recentArticles = ref([]);
 const newsletterSection = ref(null)
@@ -190,7 +190,7 @@ const fetchHomeData = async () => {
         readersCount.value = data.readersCount;
         categoriesCount.value = data.categoriesCount;
         featuredArticle.value = data.featuredArticle || null;
-        // categories.value = data.categories || [];
+        categories.value = data.categories || [];
         popularTags.value = data.popularTags || [];
         recentArticles.value = data.recentArticles || [];
     } catch (error) {

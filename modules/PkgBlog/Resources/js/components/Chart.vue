@@ -1,5 +1,5 @@
 <template>
-    <div class="card bg-base-100 shadow-xl w-full max-w-full mx-auto p-4">
+    <div class="card bg-base-100 w-full max-w-full mx-auto p-4">
         <canvas ref="chartCanvas" class="w-full h-72"></canvas>
     </div>
 </template>
