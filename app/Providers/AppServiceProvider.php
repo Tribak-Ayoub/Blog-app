@@ -22,10 +22,10 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+    public function boot()
     {
-        if (app()->environment('production')) {
-            URL::forceScheme('https');
+        if (!file_exists(database_path('database.sqlite'))) {
+            \Log::error('SQLite database file is missing!');
         }
     }
 }
