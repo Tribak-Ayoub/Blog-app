@@ -9,10 +9,7 @@
             <Navbar :isSidebarCollapsed="isSidebarCollapsed" @toggle-sidebar="toggleSidebar" />
 
             <!-- Main Content Area -->
-            <main :class="[
-                'flex-1 overflow-y-auto p-4 bg-gray-100',
-                isSidebarCollapsed ? 'ml-16' : 'ml-64',
-            ]" style="margin-top: 4rem;">
+            <main class="flex-1 overflow-y-auto p-4 bg-gray-100">
                     <slot />
             </main>
         </div>
