@@ -10,14 +10,14 @@ class ChartDataService
     public function getChartData($model, $dateColumn)
     {
         // Fetch the total views for each month of the current year (for line chart)
-        $viewsData = $model::selectRaw("MONTH($dateColumn) as month, SUM(view_count) as total_views")
+        $viewsData = $model::selectRaw("strftime('%m',$dateColumn) as month, SUM(view_count) as total_views")
             ->whereYear($dateColumn, Carbon::now()->year)
             ->groupBy('month')
             ->orderBy('month')
             ->get();
 
         // Fetch the article count for each month of the current year (for bar chart)
-        $articleData = $model::selectRaw("MONTH($dateColumn) as month, COUNT(*) as article_count")
+        $articleData = $model::selectRaw("strftime('%m',$dateColumn) as month, COUNT(*) as article_count")
             ->whereYear($dateColumn, Carbon::now()->year)
             ->groupBy('month')
             ->orderBy('month')
@@ -39,7 +39,7 @@ class ChartDataService
         }
 
         // Map months to short format names (Jan, Feb, etc.)
-        $labels = collect($months)->map(fn($month) => Carbon::create()->month($month)->format('M'));
+        $labels = collect($months)->map(fn($month) => Carbon::create()->strftime('%m',$month)->format('M'));
 
         // Return chart datasets for both article count and view count
         return [
